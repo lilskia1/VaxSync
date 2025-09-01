@@ -1,0 +1,7 @@
+@page "/admin-dashboard"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+<h1>Panel de Administración</h1>
+<p>Bienvenido al área de administración del sistema VaxSync.</p>

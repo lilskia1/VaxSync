@@ -32,6 +32,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXEFjY2Vzc0RlbmllZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/sande/VaxSync.Web/Components/Account/Pages/AdminDashboard.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXEFkbWluRGFzaGJvYXJkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/sande/VaxSync.Web/Components/Account/Pages/ConfirmEmail.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXENvbmZpcm1FbWFpbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -126,6 +130,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/sande/VaxSync.Web/Components/Account/Pages/Manage/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXE1hbmFnZVxfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sande/VaxSync.Web/Components/Account/Pages/NurseDashboard.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXE51cnNlRGFzaGJvYXJkLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/sande/VaxSync.Web/Components/Account/Pages/Register.razor]
