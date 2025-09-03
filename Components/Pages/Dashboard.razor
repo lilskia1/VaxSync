@@ -1,0 +1,131 @@
+@page "/dashboard"
+@using VaxSync.Web.Models
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="row">
+    <!-- Left column (main content) -->
+    <div class="col-md-9">
+        <h3 class="mb-4">Student Summary</h3>
+
+        <!-- Welcome alert -->
+        <div class="alert alert-info text-start" role="alert">
+            <h4 class="alert-heading">Welcome, Santos!</h4>
+            <p>Today is @DateTime.Now.ToString("dddd, MMMM dd, yyyy"). You have @compliantStudents students up-to-date, and @pendingStudents pending vaccinations.</p>
+        </div>
+
+        <!-- Summary cards -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Students</h5>
+                        <p class="card-text fs-3">@totalStudents</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Compliant</h5>
+                        <p class="card-text fs-3">@compliantStudents</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending</h5>
+                        <p class="card-text fs-3">@pendingStudents</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Table -->
+        <div class="card mb-4">
+            <div class="card-header">
+                Student List
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Full Name</th>
+                            <th>School ID</th>
+                            <th>Date of Birth</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in students)
+                        {
+                            <tr>
+                                <td>@student.FullName</td>
+                                <td>@student.SchoolId</td>
+                                <td>@student.DateOfBirth</td>
+                                <td>
+                                    @if (student.IsCompliant)
+                                    {
+                                        <span class="badge bg-success">✅ Compliant</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">❌ Pending</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right column (student profile preview) -->
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="Student Avatar" />
+
+                <h5 class="card-title">Student Info</h5>
+                <p class="card-text">Male, 12 years old</p>
+                <hr />
+                <p><strong>Grade:</strong> 6th</p>
+                <p><strong>MMR:</strong> 1st Dose</p>
+                <p><strong>Status:</strong> ✅ Up to Date</p>
+
+                <hr />
+                <h6>Next Vaccinations</h6>
+                <ul class="list-unstyled">
+                    <li>📌 Physical Education</li>
+                    <li>💉 COVID Booster</li>
+                    <li>🧘 Relaxation Techniques</li>
+                </ul>
+
+                <button class="btn btn-outline-primary btn-sm mt-2">Update Info</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Student> students = new();
+    private int totalStudents = 0;
+    private int compliantStudents = 0;
+    private int pendingStudents = 0;
+
+    protected override void OnInitialized()
+    {
+        students = new List<Student>
+        {
+            new Student { Id = 1, FullName = "Ana Rivera", SchoolId = "S123", DateOfBirth = "2010-01-01", Gender = "F", IsCompliant = true },
+            new Student { Id = 2, FullName = "Carlos Pérez", SchoolId = "S124", DateOfBirth = "2009-03-15", Gender = "M", IsCompliant = false },
+            new Student { Id = 3, FullName = "Laura Vélez", SchoolId = "S125", DateOfBirth = "2011-06-22", Gender = "F", IsCompliant = true }
+        };
+
+        totalStudents = students.Count;
+        compliantStudents = students.Count(s => s.IsCompliant);
+        pendingStudents = students.Count(s => !s.IsCompliant);
+    }
+}

@@ -1,0 +1,104 @@
+@page "/student-lookup"
+@using VaxSync.Web.Models
+
+<PageTitle>Student Lookup</PageTitle>
+
+<h3>Search Student Records</h3>
+
+<div class="mb-3">
+    <input class="form-control" placeholder="Enter Student ID or SSN" @bind="searchTerm" />
+</div>
+
+<button class="btn btn-primary mb-4" @onclick="SearchStudent">Search</button>
+
+@if (filteredStudent != null)
+{
+    <h5>Results for: <strong>@filteredStudent.FullName</strong></h5>
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Vaccine</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var v in filteredStudent.Vaccines)
+            {
+                <tr>
+                    <td>@v.VaccineName</td>
+                    <td>@v.Date</td>
+                    <td>
+                        @if (v.Status == "Compliant")
+                        {
+                            <span class="text-success">✅ Compliant</span>
+                        }
+                        else if (v.Status == "Pending")
+                        {
+                            <span class="text-warning">⚠️ Pending</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">❌ Not Compliant</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a class="btn btn-outline-secondary" href="#">View Full History</a>
+}
+else if (searched)
+{
+    <p class="text-danger">No student found with that ID or SSN.</p>
+}
+
+@code {
+    private string searchTerm = string.Empty;
+    private Student? filteredStudent;
+    private bool searched = false;
+
+    private List<Student> students = new()
+    {
+        new Student
+        {
+            Id = 1,
+            FullName = "Ana Rivera",
+            SchoolId = "S123",
+            SSN = "123-45-6789",
+            DateOfBirth = "2010-01-01",
+            Gender = "F",
+            IsCompliant = true,
+            Vaccines = new List<VaccineRecord>
+            {
+                new VaccineRecord { VaccineName = "MMR", Date = "2021-08-01", Status = "Compliant" },
+                new VaccineRecord { VaccineName = "DTaP", Date = "2023-04-15", Status = "Pending" }
+            }
+        },
+        new Student
+        {
+            Id = 2,
+            FullName = "Carlos Pérez",
+            SchoolId = "S124",
+            SSN = "987-65-4321",
+            DateOfBirth = "2009-03-15",
+            Gender = "M",
+            IsCompliant = false,
+            Vaccines = new List<VaccineRecord>
+            {
+                new VaccineRecord { VaccineName = "Hepatitis B", Date = "2022-09-10", Status = "Not Compliant" }
+            }
+        }
+    };
+
+    private void SearchStudent()
+    {
+        searched = true;
+        filteredStudent = students.FirstOrDefault(s =>
+            s.SchoolId.Equals(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            s.SSN.Equals(searchTerm, StringComparison.OrdinalIgnoreCase)
+        );
+    }
+}

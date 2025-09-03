@@ -1,0 +1,94 @@
+@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+
+<PageTitle>Welcome to VaxSync</PageTitle>
+
+<style>
+    .split-screen {
+        display: flex;
+        height: 100vh;
+    }
+
+    .left-pane {
+        background-color: #2196f3;
+        color: white;
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .right-pane {
+        background-color: #fff;
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 2rem 4rem;
+    }
+
+    .vax-logo {
+        width: 160px;
+        height: auto;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-custom {
+        width: 120px;
+    }
+
+    <div class="left-pane">
+    <!-- Logo omitido temporalmente -->
+    <h1 class="mb-3 fw-bold">Vax Sync</h1>
+    <h4><strong>VaxTrack</strong> is your student vaccine hub.</h4>
+    <p>Manage student vaccine records with ease.</p>
+</div>
+
+        }
+    }
+</style>
+
+<div class="split-screen">
+
+    <!-- LEFT: Branding -->
+    <div class="left-pane">
+        <img src="images/vaxsync-logo.png" alt="VaxSync Logo" class="vax-logo" />
+        <h2><strong>VaxTrack</strong> is your student vaccine hub.</h2>
+        <p>Manage student vaccine records with ease.</p>
+    </div>
+
+    <!-- RIGHT: Login Panel -->
+    <div class="right-pane">
+        <div class="text-end">
+            <small class="text-muted">Login Form</small>
+            <h4 class="fw-bold">Vax Sync</h4>
+        </div>
+
+        <h3 class="mt-5 mb-4 fw-bold">Log in</h3>
+
+        <div class="mb-3">
+            <label for="username" class="form-label">Email Address</label>
+            <input id="username" type="text" class="form-control" placeholder="Enter your username" />
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input id="password" type="password" class="form-control" placeholder="*********" />
+        </div>
+
+        <div class="d-flex justify-content-start gap-3 mb-3">
+            <NavLink href="Account/Register" class="btn btn-outline-primary btn-custom">Register</NavLink>
+            <NavLink href="Account/Login" class="btn btn-primary btn-custom">Log in</NavLink>
+        </div>
+
+        <p class="text-muted mb-4">
+            <a href="#">Forgot your password?</a>
+        </p>
+
+        <NavLink href="admin-dashboard" class="btn btn-primary w-100">Admin Panel</NavLink>
+    </div>
+</div>
