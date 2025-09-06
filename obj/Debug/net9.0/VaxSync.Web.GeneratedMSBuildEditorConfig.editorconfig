@@ -36,6 +36,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXEFkbWluRGFzaGJvYXJkLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/sande/VaxSync.Web/Components/Account/Pages/Alerts.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXEFsZXJ0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/sande/VaxSync.Web/Components/Account/Pages/ConfirmEmail.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXENvbmZpcm1FbWFpbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -156,12 +160,28 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXFJlc2V0UGFzc3dvcmRDb25maXJtYXRpb24ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/sande/VaxSync.Web/Components/Account/Pages/SchoolReport.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXFNjaG9vbFJlcG9ydC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sande/VaxSync.Web/Components/Account/Pages/SearchRecords.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXFNlYXJjaFJlY29yZHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/sande/VaxSync.Web/Components/Account/Pages/Start.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXFN0YXJ0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/sande/VaxSync.Web/Components/Account/Pages/StudentDetails.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXFN0dWRlbnREZXRhaWxzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/sande/VaxSync.Web/Components/Account/Pages/StudentLookup.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXFN0dWRlbnRMb29rdXAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sande/VaxSync.Web/Components/Account/Pages/StudentReport.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXFN0dWRlbnRSZXBvcnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/sande/VaxSync.Web/Components/Account/Pages/_Imports.razor]
@@ -190,6 +210,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/sande/VaxSync.Web/Components/Account/Shared/StatusMessage.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFNoYXJlZFxTdGF0dXNNZXNzYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sande/VaxSync.Web/Components/Alerts.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBbGVydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/sande/VaxSync.Web/Components/App.razor]

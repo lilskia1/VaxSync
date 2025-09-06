@@ -1,0 +1,80 @@
+@page "/school-report"
+@using VaxSync.Web.Models
+
+<PageTitle>School Reports</PageTitle>
+
+<h3 class="mb-4">School Compliance Report</h3>
+
+<!-- Filtro por estatus -->
+<div class="mb-3">
+    <label class="form-label">Filter by Status:</label>
+    <select class="form-select" @bind="selectedStatus">
+        <option value="">All</option>
+        <option value="Compliant">✅ Compliant</option>
+        <option value="Pending">⚠️ Pending</option>
+        <option value="Not Compliant">❌ Not Compliant</option>
+    </select>
+</div>
+
+<!-- Tabla de estudiantes -->
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Student ID</th>
+            <th>Full Name</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in FilteredStudents)
+        {
+            <tr>
+                <td>@student.SchoolId</td>
+                <td>@student.FullName</td>
+                <td>
+                    @if (student.IsCompliant)
+                    {
+                        <span class="text-success">✅ Compliant</span>
+                    }
+                    else
+                    {
+                        <span class="text-warning">⚠️ Pending</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Botón para exportar -->
+<button class="btn btn-outline-primary" @onclick="ExportReport">
+    📄 Export Report (Coming Soon)
+</button>
+
+@code {
+    private string selectedStatus = "";
+    private List<Student> students = new();
+    private IEnumerable<Student> FilteredStudents => string.IsNullOrEmpty(selectedStatus)
+        ? students
+        : students.Where(s =>
+            selectedStatus == "Compliant" && s.IsCompliant ||
+            selectedStatus == "Pending" && !s.IsCompliant ||
+            selectedStatus == "Not Compliant" && !s.IsCompliant); // Se puede refinar luego
+
+    protected override void OnInitialized()
+    {
+        // Datos simulados
+        students = new()
+        {
+            new Student { Id = 1, FullName = "Ana Rivera", SchoolId = "S123", IsCompliant = true },
+            new Student { Id = 2, FullName = "Carlos Pérez", SchoolId = "S124", IsCompliant = false },
+            new Student { Id = 3, FullName = "Laura Vélez", SchoolId = "S125", IsCompliant = true }
+        };
+    }
+
+    private void ExportReport()
+    {
+        // En este paso solo mostramos un mensaje o placeholder
+        Console.WriteLine("Export report clicked (feature coming soon)");
+    }
+}

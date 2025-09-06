@@ -24,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var v in filteredStudent.Vaccines)
+            @foreach (var v in filteredStudent.VaccineRecords)
             {
                 <tr>
                     <td>@v.VaccineName</td>
@@ -48,7 +48,7 @@
         </tbody>
     </table>
 
-    <a class="btn btn-outline-secondary" href="#">View Full History</a>
+    <a class="btn btn-outline-secondary" href=$"/student-details/{filteredStudent.Id}">View Full History</a>
 }
 else if (searched)
 {
@@ -60,38 +60,39 @@ else if (searched)
     private Student? filteredStudent;
     private bool searched = false;
 
-    private List<Student> students = new()
+   private List<Student> students = new()
+{
+    new Student
     {
-        new Student
+        Id = 1,
+        FullName = "Ana Rivera",
+        SchoolId = "S123",
+        SSN = "123-45-6789",
+        DateOfBirth = "2010-01-01",
+        Gender = "F",
+        IsCompliant = true,
+        VaccineRecords = new List<VaccineRecord>
         {
-            Id = 1,
-            FullName = "Ana Rivera",
-            SchoolId = "S123",
-            SSN = "123-45-6789",
-            DateOfBirth = "2010-01-01",
-            Gender = "F",
-            IsCompliant = true,
-            Vaccines = new List<VaccineRecord>
-            {
-                new VaccineRecord { VaccineName = "MMR", Date = "2021-08-01", Status = "Compliant" },
-                new VaccineRecord { VaccineName = "DTaP", Date = "2023-04-15", Status = "Pending" }
-            }
-        },
-        new Student
-        {
-            Id = 2,
-            FullName = "Carlos Pérez",
-            SchoolId = "S124",
-            SSN = "987-65-4321",
-            DateOfBirth = "2009-03-15",
-            Gender = "M",
-            IsCompliant = false,
-            Vaccines = new List<VaccineRecord>
-            {
-                new VaccineRecord { VaccineName = "Hepatitis B", Date = "2022-09-10", Status = "Not Compliant" }
-            }
+            new VaccineRecord { VaccineName = "MMR", Date = "2021-08-01", Status = "Compliant" },
+            new VaccineRecord { VaccineName = "DTaP", Date = "2023-04-15", Status = "Pending" }
         }
-    };
+    },
+    new Student
+    {
+        Id = 2,
+        FullName = "Carlos Pérez",
+        SchoolId = "S124",
+        SSN = "987-65-4321",
+        DateOfBirth = "2009-03-15",
+        Gender = "M",
+        IsCompliant = false,
+        VaccineRecords = new List<VaccineRecord>
+        {
+            new VaccineRecord { VaccineName = "Hepatitis B", Date = "2022-09-10", Status = "Not Compliant" }
+        }
+    }
+};
+
 
     private void SearchStudent()
     {

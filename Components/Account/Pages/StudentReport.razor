@@ -1,0 +1,75 @@
+@page "/student-report"
+@using VaxSync.Web.Models
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@using System.Text
+
+<PageTitle>Student Report</PageTitle>
+
+<h3>Student Report Generator</h3>
+
+<div class="mb-3">
+    <input class="form-control" placeholder="Enter Student ID or SSN" @bind="searchTerm" />
+</div>
+
+<button class="btn btn-primary mb-4" @onclick="GeneratePdf">Download PDF Report</button>
+
+@if (pdfGenerated)
+{
+    <div class="alert alert-success">PDF generated! Check your downloads.</div>
+}
+
+@code {
+    private string searchTerm = string.Empty;
+    private bool pdfGenerated = false;
+
+    private List<Student> students = new()
+    {
+        new Student
+        {
+            Id = 1,
+            FullName = "Ana Rivera",
+            SchoolId = "S123",
+            SSN = "123-45-6789",
+            DateOfBirth = "2010-01-01",
+            Gender = "F",
+            IsCompliant = true,
+            VaccineRecords = new List<VaccineRecord>
+            {
+                new VaccineRecord { VaccineName = "MMR", Date = "2021-08-01", Status = "Compliant" },
+                new VaccineRecord { VaccineName = "DTaP", Date = "2023-04-15", Status = "Pending" }
+            }
+        }
+    };
+
+    private async Task GeneratePdf()
+    {
+        var student = students.FirstOrDefault(s =>
+            s.SSN.Equals(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+            s.SchoolId.Equals(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+        if (student is null)
+        {
+            pdfGenerated = false;
+            return;
+        }
+
+        var content = new StringBuilder();
+        content.AppendLine($"Student Report for {student.FullName}");
+        content.AppendLine($"School ID: {student.SchoolId}");
+        content.AppendLine($"Date of Birth: {student.DateOfBirth}");
+        content.AppendLine($"Gender: {student.Gender}");
+        content.AppendLine("");
+        content.AppendLine("Vaccination Records:");
+        foreach (var v in student.VaccineRecords)
+        {
+            content.AppendLine($"- {v.VaccineName} ({v.Date}): {v.Status}");
+        }
+
+        var bytes = Encoding.UTF8.GetBytes(content.ToString());
+        var base64 = Convert.ToBase64String(bytes);
+        await JSRuntime.InvokeVoidAsync("downloadFile", $"StudentReport_{student.SchoolId}.txt", base64);
+
+        pdfGenerated = true;
+    }
+}

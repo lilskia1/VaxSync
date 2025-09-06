@@ -1,0 +1,66 @@
+@using VaxSync.Web.Models
+
+<PageTitle>Vaccination Alerts</PageTitle>
+
+<h3>Vaccination Alerts</h3>
+<p class="text-muted">This page shows students with pending or soon-to-expire vaccines.</p>
+
+@if (alerts.Any())
+{
+    <table class="table table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Student</th>
+                <th>Vaccine</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var alert in alerts)
+            {
+                <tr>
+                    <td>@alert.StudentName</td>
+                    <td>@alert.VaccineName</td>
+                    <td>@alert.Date</td>
+                    <td>
+                        @if (alert.Status == "ExpiringSoon")
+                        {
+                            <span class="text-warning">⚠️ Expiring Soon</span>
+                        }
+                        else if (alert.Status == "Pending")
+                        {
+                            <span class="text-danger">❌ Pending</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-success">All students are up to date with vaccinations.</div>
+}
+
+@code {
+    private List<VaccineAlert> alerts = new();
+
+    protected override void OnInitialized()
+    {
+        // Sample mock data
+        alerts = new List<VaccineAlert>
+        {
+            new VaccineAlert { StudentName = "Ana Rivera", VaccineName = "DTaP", Date = "2023-09-15", Status = "ExpiringSoon" },
+            new VaccineAlert { StudentName = "Carlos Pérez", VaccineName = "Hepatitis B", Date = "2023-01-10", Status = "Pending" }
+        };
+    }
+
+    private class VaccineAlert
+    {
+        public string StudentName { get; set; } = "";
+        public string VaccineName { get; set; } = "";
+        public string Date { get; set; } = "";
+        public string Status { get; set; } = ""; // "Pending", "ExpiringSoon"
+    }
+}

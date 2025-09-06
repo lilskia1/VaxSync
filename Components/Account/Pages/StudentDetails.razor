@@ -1,0 +1,105 @@
+@page "/student-details/{id:int}"
+@using VaxSync.Web.Models
+@inject NavigationManager Navigation
+
+<PageTitle>Student Details</PageTitle>
+
+@if (student == null)
+{
+    <p><em>Loading student data...</em></p>
+}
+else
+{
+    <div class="container mt-4">
+        <h2>@student.FullName</h2>
+        <p><strong>School ID:</strong> @student.SchoolId</p>
+        <p><strong>Date of Birth:</strong> @student.DateOfBirth</p>
+        <p><strong>Gender:</strong> @student.Gender</p>
+
+        <h4 class="mt-4">Vaccination Records</h4>
+        <table class="table table-bordered mt-2">
+            <thead class="table-light">
+                <tr>
+                    <th>Vaccine</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Icon</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var record in student.VaccineRecords)
+                {
+                    <tr>
+                        <td>@record.VaccineName</td>
+                        <td>@record.Date</td>
+                        <td>@record.Status</td>
+                        <td>
+                            @if (record.Status == "Compliant")
+                            {
+                                <span class="text-success">✅</span>
+                            }
+                            else if (record.Status == "Pending")
+                            {
+                                <span class="text-warning">⚠️</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger">❌</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button class="btn btn-secondary mt-3" @onclick="GoBack">← Back to Search</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Student? student;
+
+    protected override void OnInitialized()
+    {
+        // Mock: Load a student by ID (replace with real DB lookup later)
+        var allStudents = new List<Student>
+        {
+            new Student
+            {
+                Id = 1,
+                FullName = "Ana Rivera",
+                SchoolId = "S123",
+                DateOfBirth = "2010-01-01",
+                Gender = "F",
+                VaccineRecords = new List<VaccineRecord>
+                {
+                    new VaccineRecord { VaccineName = "MMR", Date = "2022-08-15", Status = "Compliant" },
+                    new VaccineRecord { VaccineName = "Polio", Date = "2022-08-20", Status = "Pending" }
+                }
+            },
+            new Student
+            {
+                Id = 2,
+                FullName = "Carlos Pérez",
+                SchoolId = "S124",
+                DateOfBirth = "2009-03-15",
+                Gender = "M",
+                VaccineRecords = new List<VaccineRecord>
+                {
+                    new VaccineRecord { VaccineName = "Hepatitis B", Date = "2021-06-01", Status = "Not Compliant" },
+                    new VaccineRecord { VaccineName = "Varicella", Date = "2022-05-12", Status = "Compliant" }
+                }
+            }
+        };
+
+        student = allStudents.FirstOrDefault(s => s.Id == id);
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/student-lookup");
+    }
+}

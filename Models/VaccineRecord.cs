@@ -13,3 +13,4 @@ namespace VaxSync.Web.Models
         public string Status { get; set; } = "Pending";
     }
 }
+ 

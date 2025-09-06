@@ -15,26 +15,26 @@
 
         <!-- Siempre visible -->
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            <NavLink class="nav-link d-flex align-items-center gap-2" href="" Match="NavLinkMatch.All">
+                <i class="bi bi-house-door-fill"></i> Home
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link d-flex align-items-center gap-2" href="counter">
+                <i class="bi bi-plus-square-fill"></i> Counter
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+            <NavLink class="nav-link d-flex align-items-center gap-2" href="weather">
+                <i class="bi bi-list-nested"></i> Weather
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auth">
-                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
+            <NavLink class="nav-link d-flex align-items-center gap-2" href="auth">
+                <i class="bi bi-lock"></i> Auth Required
             </NavLink>
         </div>
 
@@ -42,14 +42,36 @@
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="dashboard">
-                        <span class="bi bi-speedometer2-nav-menu" aria-hidden="true"></span> Dashboard
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="dashboard">
+                        <i class="bi bi-speedometer2"></i> Dashboard
                     </NavLink>
                 </div>
 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="student-lookup">
+                        <i class="bi bi-search"></i> Student Lookup
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="alerts">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Alerts
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="school-report">
+                        <i class="bi bi-file-earmark-bar-graph"></i> Reports
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="student-report">
+                        <i class="bi bi-file-earmark-person"></i> Student Report
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="Account/Manage">
+                        <i class="bi bi-person-fill"></i> @context.User.Identity?.Name
                     </NavLink>
                 </div>
 
@@ -57,8 +79,8 @@
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                        <button type="submit" class="nav-link d-flex align-items-center gap-2">
+                            <i class="bi bi-box-arrow-left"></i> Logout
                         </button>
                     </form>
                 </div>
@@ -66,23 +88,18 @@
 
             <NotAuthorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="Account/Register">
+                        <i class="bi bi-person"></i> Register
                     </NavLink>
                 </div>
 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="Account/Login">
+                        <i class="bi bi-person-badge"></i> Login
                     </NavLink>
                 </div>
             </NotAuthorized>
         </AuthorizeView>
-<div class="nav-item px-3">
-    <NavLink class="nav-link" href="student-lookup">
-        <span class="bi bi-search-nav-menu" aria-hidden="true"></span> Student Lookup
-    </NavLink>
-</div>
     </nav>
 </div>
 

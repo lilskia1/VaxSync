@@ -8,6 +8,9 @@ namespace VaxSync.Web.Models
         public string DateOfBirth { get; set; } = string.Empty; // Fecha de nacimiento
         public string Gender { get; set; } = string.Empty; // Género (opcional)
         public string SSN { get; set; } = string.Empty;
+        public List<VaccineRecord> VaccineRecords { get; set; } = new();
+        
+
 public List<VaccineRecord> Vaccines { get; set; } = new();
 
 

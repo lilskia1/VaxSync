@@ -207,3 +207,4 @@ C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\refint\VaxSync.Web.dll
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\VaxSync.Web.pdb
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\VaxSync.Web.genruntimeconfig.cache
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\ref\VaxSync.Web.dll
+C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\compressed\38hp3idqz9-60kswyc6cv.gz
