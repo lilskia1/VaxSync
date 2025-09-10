@@ -8,5 +8,7 @@ namespace VaxSync.Web.Data;
 public class ApplicationUser : IdentityUser
 {
     private string DebuggerDisplay => ToString();
+    public string SchoolId { get; set; } = string.Empty;
+
 }
 

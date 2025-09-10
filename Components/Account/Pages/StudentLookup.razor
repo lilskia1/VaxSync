@@ -1,5 +1,12 @@
 @page "/student-lookup"
 @using VaxSync.Web.Models
+@using VaxSync.Web.Data
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@inject ApplicationDbContext DbContext
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Student Lookup</PageTitle>
 
@@ -59,47 +66,30 @@ else if (searched)
     private string searchTerm = string.Empty;
     private Student? filteredStudent;
     private bool searched = false;
+    private string? userSchoolId;
 
-   private List<Student> students = new()
-{
-    new Student
+    protected override async Task OnInitializedAsync()
     {
-        Id = 1,
-        FullName = "Ana Rivera",
-        SchoolId = "S123",
-        SSN = "123-45-6789",
-        DateOfBirth = "2010-01-01",
-        Gender = "F",
-        IsCompliant = true,
-        VaccineRecords = new List<VaccineRecord>
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+
+        if (user is not null)
         {
-            new VaccineRecord { VaccineName = "MMR", Date = "2021-08-01", Status = "Compliant" },
-            new VaccineRecord { VaccineName = "DTaP", Date = "2023-04-15", Status = "Pending" }
-        }
-    },
-    new Student
-    {
-        Id = 2,
-        FullName = "Carlos Pérez",
-        SchoolId = "S124",
-        SSN = "987-65-4321",
-        DateOfBirth = "2009-03-15",
-        Gender = "M",
-        IsCompliant = false,
-        VaccineRecords = new List<VaccineRecord>
-        {
-            new VaccineRecord { VaccineName = "Hepatitis B", Date = "2022-09-10", Status = "Not Compliant" }
+            userSchoolId = user.SchoolId;
         }
     }
-};
-
 
     private void SearchStudent()
     {
         searched = true;
-        filteredStudent = students.FirstOrDefault(s =>
-            s.SchoolId.Equals(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            s.SSN.Equals(searchTerm, StringComparison.OrdinalIgnoreCase)
-        );
+
+        if (!string.IsNullOrWhiteSpace(searchTerm) && userSchoolId is not null)
+        {
+            filteredStudent = DbContext.Students
+                .Where(s => s.SchoolId == userSchoolId &&
+                           (s.SchoolId.Equals(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                            s.SSN.Equals(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                .FirstOrDefault();
+        }
     }
 }

@@ -151,6 +151,7 @@ C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\scopedcss\Components\Layout\NavMenu.
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\scopedcss\bundle\VaxSync.Web.styles.css
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\scopedcss\projectbundle\VaxSync.Web.bundle.scp.css
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\compressed\l754y5zyqo-khy4lop6wu.gz
+C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\compressed\38hp3idqz9-60kswyc6cv.gz
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\compressed\vigy4p29iz-bqjiyaj88i.gz
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\compressed\ckeav53c5m-c2jlpeoesf.gz
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\compressed\520f5m66wr-erw9l3u2r3.gz
@@ -207,4 +208,3 @@ C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\refint\VaxSync.Web.dll
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\VaxSync.Web.pdb
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\VaxSync.Web.genruntimeconfig.cache
 C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\ref\VaxSync.Web.dll
-C:\Users\sande\VaxSync.Web\obj\Debug\net9.0\compressed\38hp3idqz9-60kswyc6cv.gz
