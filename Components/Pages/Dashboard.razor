@@ -1,148 +1,145 @@
 @page "/dashboard"
+@using MudBlazor
 @using VaxSync.Web.Models
 @using Microsoft.AspNetCore.Identity
 @using VaxSync.Web.Data
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ApplicationDbContext _context
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.Security.Claims
+@using Microsoft.EntityFrameworkCore
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthState
+@inject ApplicationDbContext Db
 
 <PageTitle>Dashboard</PageTitle>
 
-<div class="row">
-    <!-- Left column -->
-    <div class="col-md-9">
-        <h3 class="mb-4">Student Summary</h3>
+<MudGrid Class="mb-6">
+  <MudItem xs="12">
+    <MudAlert Severity="Severity.Info" Elevation="0">
+      <MudText Typo="Typo.subtitle1" Color="Color.Secondary">Welcome, @userName.</MudText>
+      <MudText Class="mud-text-secondary">
+        Today is @DateTime.Now.ToString("dddd, MMMM dd, yyyy"). Up-to-date: @Totals.Compliant. Pending: @Totals.Pending.
+      </MudText>
+    </MudAlert>
+  </MudItem>
 
-        <div class="alert alert-info text-start" role="alert">
-            <h4 class="alert-heading">Welcome, @userName!</h4>
-            <p>Today is @DateTime.Now.ToString("dddd, MMMM dd, yyyy"). You have @compliantStudents students up-to-date, and @pendingStudents pending vaccinations.</p>
-        </div>
+  <MudItem xs="12" sm="6" md="3">
+    <MudPaper Elevation="1" Class="p-4">
+      <MudText Class="mud-text-secondary" Typo="Typo.overline">Total Students</MudText>
+      <MudText Typo="Typo.h4">@Totals.Total</MudText>
+    </MudPaper>
+  </MudItem>
+  <MudItem xs="12" sm="6" md="3">
+    <MudPaper Elevation="1" Class="p-4">
+      <MudText Class="mud-text-secondary" Typo="Typo.overline">Compliant</MudText>
+      <MudText Typo="Typo.h4" Color="Color.Success">@Totals.Compliant</MudText>
+    </MudPaper>
+  </MudItem>
+  <MudItem xs="12" sm="6" md="3">
+    <MudPaper Elevation="1" Class="p-4">
+      <MudText Class="mud-text-secondary" Typo="Typo.overline">Pending</MudText>
+      <MudText Typo="Typo.h4" Color="Color.Warning">@Totals.Pending</MudText>
+    </MudPaper>
+  </MudItem>
+  <MudItem xs="12" sm="6" md="3">
+    <MudPaper Elevation="1" Class="p-4">
+      <MudText Class="mud-text-secondary" Typo="Typo.overline">Not Compliant</MudText>
+      <MudText Typo="Typo.h4" Color="Color.Error">@Totals.NotCompliant</MudText>
+    </MudPaper>
+  </MudItem>
 
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card text-white bg-primary mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Students</h5>
-                        <p class="card-text fs-3">@totalStudents</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-success mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Compliant</h5>
-                        <p class="card-text fs-3">@compliantStudents</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-warning mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Pending</h5>
-                        <p class="card-text fs-3">@pendingStudents</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <MudItem xs="12">
+    <MudPaper Class="p-4 mb-6">
+      <MudText Typo="Typo.h6" Class="mb-2">Compliance Trend</MudText>
+      @if (Trend is null)
+      {
+        <MudSkeleton Height="220px" />
+      }
+      else
+      {
+        <MudChart ChartType="ChartType.Line" Labels="@Trend.Labels" Datasets="@Trend.Series" />
+      }
+    </MudPaper>
+  </MudItem>
 
-        <div class="card mb-4">
-            <div class="card-header">Student List</div>
-            <div class="card-body">
-                <table class="table table-bordered table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Full Name</th>
-                            <th>School ID</th>
-                            <th>Date of Birth</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var student in students)
+  <MudItem xs="12">
+    <MudPaper Class="p-0">
+      <MudTable Items="@students" Dense="true" Hover="true" RowsPerPage="10" Bordered="true" Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+          <MudTh>Full Name</MudTh>
+          <MudTh>School ID</MudTh>
+          <MudTh>DOB</MudTh>
+          <MudTh>Status</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+          <MudTd DataLabel="Full Name">@context.FullName</MudTd>
+          <MudTd DataLabel="School ID">@context.SchoolId</MudTd>
+          <MudTd DataLabel="DOB">@context.DateOfBirth</MudTd>
+                    <MudTd DataLabel="Status">
+                        @if (context.IsCompliant)
                         {
-                            <tr>
-                                <td>@student.FullName</td>
-                                <td>@student.SchoolId</td>
-                                <td>@student.DateOfBirth</td>
-                                <td>
-                                    @if (student.IsCompliant)
-                                    {
-                                        <span class="badge bg-success">✅ Compliant</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">❌ Pending</span>
-                                    }
-                                </td>
-                            </tr>
+                            <MudChip T="string"
+                                     Color="Color.Success"
+                                     StartIcon="@Icons.Material.Filled.CheckCircle"
+                                     Size="Size.Small">
+                                Compliant
+                            </MudChip>
                         }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+                        else
+                        {
+                            <MudChip T="string"
+                                     Color="Color.Warning"
+                                     StartIcon="@Icons.Material.Filled.Schedule"
+                                     Size="Size.Small">
+                                Pending
+                            </MudChip>
+                        }
+                    </MudTd>
 
-    <!-- Right column -->
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="Student Avatar" />
-                <h5 class="card-title">Student Info</h5>
-                <p class="card-text">Male, 12 years old</p>
-                <hr />
-                <p><strong>Grade:</strong> 6th</p>
-                <p><strong>MMR:</strong> 1st Dose</p>
-                <p><strong>Status:</strong> ✅ Up to Date</p>
-                <hr />
-                <h6>Next Vaccinations</h6>
-                <ul class="list-unstyled">
-                    <li>📌 Physical Education</li>
-                    <li>💉 COVID Booster</li>
-                    <li>🧘 Relaxation Techniques</li>
-                </ul>
-                <button class="btn btn-outline-primary btn-sm mt-2">Update Info</button>
-            </div>
-        </div>
-    </div>
-</div>
+        </RowTemplate>
+      </MudTable>
+    </MudPaper>
+  </MudItem>
+</MudGrid>
 
 @code {
-    private List<Student> students = new();
-    private int totalStudents = 0;
-    private int compliantStudents = 0;
-    private int pendingStudents = 0;
-    private string userName = "";
-    private bool isAdmin = false;
-    private bool isNurse = false;
+  private List<Student> students = new();
+  private string userName = "";
 
+  public record TotalsVm(int Total, int Compliant, int Pending, int NotCompliant);
+  public class TrendVm {
+    public List<string> Labels { get; set; } = new();
+    public List<ChartSeries> Series { get; set; } = new();
+  }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = await UserManager.GetUserAsync(authState.User);
+  TotalsVm Totals = new(0,0,0,0);
+  TrendVm? Trend;
 
-        var userClaims = authState.User;
+  protected override async Task OnInitializedAsync()
+  {
+    var state = await AuthState.GetAuthenticationStateAsync();
+    var user = await UserManager.GetUserAsync(state.User);
+    if (user is null) return;
 
-        isAdmin = userClaims.IsInRole("Admin");
-        isNurse = userClaims.IsInRole("SchoolNurse");
+    userName = user.UserName ?? "User";
+    var schoolId = user.SchoolId;
 
-        if (user is not null)
-        {
-            userName = user.UserName ?? "User";
+    // existing query, scoped by SchoolId
+    students = Db.Students
+                 .Where(s => s.SchoolId == schoolId)
+                 .AsNoTracking()
+                 .ToList();
 
-            var schoolId = user.SchoolId;
+    // totals
+    var total = students.Count;
+    var compliant = students.Count(s => s.IsCompliant);
+    var pending = total - compliant;
+    var notCompliant = pending; // adjust if you distinguish "pending" vs "not compliant"
+    Totals = new(total, compliant, pending, notCompliant);
 
-            students = await Task.FromResult(
-                _context.Students
-                    .Where(s => s.SchoolId == schoolId)
-                    .ToList()
-            );
-
-            totalStudents = students.Count;
-            compliantStudents = students.Count(s => s.IsCompliant);
-            pendingStudents = students.Count(s => !s.IsCompliant);
-        }
-    }
+    // simple sample trend; replace with real monthly data later
+    await Task.Delay(100);
+    Trend = new TrendVm {
+      Labels = Enumerable.Range(0,12).Select(i => DateTime.UtcNow.AddMonths(-11 + i).ToString("MMM")).ToList(),
+      Series = new() { new ChartSeries { Name = "Compliant %", Data = new double[]{ 62,64,65,66,67,68,69,70,71,72,73,74 } } }
+    };
+  }
 }

@@ -1,0 +1,49 @@
+﻿@page "/about"
+@using MudBlazor
+
+<PageTitle>About</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="py-6">
+    <MudText Typo="Typo.h4" Class="mb-2">About VaxSync</MudText>
+    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-4">
+        VaxSync is a student immunization tracking tool for school nurses and administrators.
+    </MudText>
+
+
+    <MudPaper Class="p-4">
+
+        <MudText Class="mud-text-secondary">
+            Polytechnic University of Puerto Rico, San Juan Campus
+        </MudText>
+        <MudText Class="mud-text-secondary">
+            Department of Electrical Engineering,
+            </MudText>
+        <MudText Class="mud-text-secondary">
+            Computer Engineering and Computer Science
+        </MudText>
+        <MudDivider Class="my-4" />
+
+        <MudText Class="mud-text-secondary">
+            Capstone Design Course II &amp; Computer Science Project II • Fall 2025
+        </MudText>
+        <MudDivider Class="my-4" />
+
+        <MudText Typo="Typo.h6" Class="mb-2">Meet the Team</MudText>
+
+        <MudList T="string" Dense="true">
+            <MudListItem T="string" Icon="@Icons.Material.Filled.Person">
+                Daniel Montes Torres — Computer Engineering <br/> montes_142281@students.pupr.edu
+
+            </MudListItem>
+            <MudListItem T="string" Icon="@Icons.Material.Filled.Person">
+                Santos Despiau Orozco — Computer Engineering <br />  despiau_134609@students.pupr.edu
+
+            </MudListItem>
+            <MudListItem T="string" Icon="@Icons.Material.Filled.Person">
+                Alanna Vega Rodríguez — Computer Science <br />  vega_137306@students.pupr.edu
+
+            </MudListItem>
+        </MudList>
+
+    </MudPaper>
+</MudContainer>

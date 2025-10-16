@@ -1,94 +1,73 @@
 @page "/"
+@page "/home"
+@using MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
-@inject NavigationManager Navigation
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthState
 
-<PageTitle>Welcome to VaxSync</PageTitle>
+<PageTitle>VaxSync</PageTitle>
 
 <style>
-    .split-screen {
+    .vx-split {
         display: flex;
-        height: 100vh;
+        min-height: calc(100vh - 64px)
     }
 
-    .left-pane {
-        background-color: #2196f3;
-        color: white;
-        width: 50%;
+    .vx-left {
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 2rem;
+        color: #fff;
+        background: linear-gradient(135deg,#0B3D91,#1BA1E2);
         text-align: center;
+        padding: 2rem
     }
 
-    .right-pane {
-        background-color: #fff;
-        width: 50%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 2rem 4rem;
+    .vx-right {
+        flex: 1;
+        background: url("images/nurse-student.jpeg") center/cover no-repeat;
+        position: relative
     }
 
-    .vax-logo {
-        width: 160px;
-        height: auto;
-        margin-bottom: 1.5rem;
-    }
-
-    .btn-custom {
-        width: 120px;
-    }
-
-    <div class="left-pane">
-    <!-- Logo omitido temporalmente -->
-    <h1 class="mb-3 fw-bold">Vax Sync</h1>
-    <h4><strong>VaxTrack</strong> is your student vaccine hub.</h4>
-    <p>Manage student vaccine records with ease.</p>
-</div>
-
+        .vx-right::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(11,61,145,.25)
         }
+
+    .vx-logo {
+        width: 150px;
+        margin-bottom: 1.5rem
+    }
+
+    .vx-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem
     }
 </style>
 
-<div class="split-screen">
+<div class="vx-split">
+    <section class="vx-left">
+        <img src="images/favicon.png" alt="VaxSync Logo" class="vx-logo" />
+        <MudText Typo="Typo.h3" Class="fw-bold">VaxSync student vaccine hub</MudText>
+        <MudText Typo="Typo.subtitle1" Class="opacity-75 mb-4">
+            Track compliance, view alerts, and export records with confidence.
+        </MudText>
+    </section>
 
-    <!-- LEFT: Branding -->
-    <div class="left-pane">
-        <img src="images/vaxsync-logo.png" alt="VaxSync Logo" class="vax-logo" />
-        <h2><strong>VaxTrack</strong> is your student vaccine hub.</h2>
-        <p>Manage student vaccine records with ease.</p>
-    </div>
-
-    <!-- RIGHT: Login Panel -->
-    <div class="right-pane">
-        <div class="text-end">
-            <small class="text-muted">Login Form</small>
-            <h4 class="fw-bold">Vax Sync</h4>
-        </div>
-
-        <h3 class="mt-5 mb-4 fw-bold">Log in</h3>
-
-        <div class="mb-3">
-            <label for="username" class="form-label">Email Address</label>
-            <input id="username" type="text" class="form-control" placeholder="Enter your username" />
-        </div>
-
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input id="password" type="password" class="form-control" placeholder="*********" />
-        </div>
-
-        <div class="d-flex justify-content-start gap-3 mb-3">
-            <NavLink href="Account/Register" class="btn btn-outline-primary btn-custom">Register</NavLink>
-            <NavLink href="Account/Login" class="btn btn-primary btn-custom">Log in</NavLink>
-        </div>
-
-        <p class="text-muted mb-4">
-            <a href="#">Forgot your password?</a>
-        </p>
-
-        <NavLink href="admin-dashboard" class="btn btn-primary w-100">Admin Panel</NavLink>
-    </div>
+    <section class="vx-right"></section>
 </div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        if (state.User.Identity?.IsAuthenticated == true)
+            Nav.NavigateTo("/dashboard", forceLoad: true);
+    }
+}

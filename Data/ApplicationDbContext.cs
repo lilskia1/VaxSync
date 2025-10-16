@@ -14,6 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Student> Students { get; set; }
     public DbSet<VaccineRecord> VaccineRecords { get; set; }
     public DbSet<AuditLog> AuditLogs { get; set; }
-    
+    public DbSet<School> Schools { get; set; }
+
 
 }

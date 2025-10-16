@@ -25,7 +25,7 @@
         <StatusMessage Message="@Message" />
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator />
-            <h2>Create a new account.</h2>
+            <h3>Create a new account</h3>
             <hr />
             <ValidationSummary class="text-danger" role="alert" />
             <div class="form-floating mb-3">
@@ -45,13 +45,6 @@
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </EditForm>
-    </div>
-    <div class="col-lg-4 col-lg-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
     </div>
 </div>
 
@@ -79,7 +72,7 @@
         {
             Logger.LogInformation("User created a new account with password.");
 
-            // 👇 Crear el rol si no existe y asignar al usuario
+            // Crear el rol si no existe y asignar al usuario
             if (!await RoleManager.RoleExistsAsync("SchoolNurse"))
             {
                 await RoleManager.CreateAsync(new IdentityRole("SchoolNurse"));

@@ -1,17 +1,34 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@using VaxSync.Web.Components.Layout
 
-<HeadContent>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-</HeadContent>
+<MudThemeProvider Theme="@AppTheme.Theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-<div class="page">
-    <div class="sidebar">
+<MudLayout>
+    <MudAppBar Elevation="4" Class="vx-appbar">
+        <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
+        <MudSpacer />
+        <AuthorizeView>
+            <Authorized>
+                <MudText Class="mr-3 text-white">Hello, @context.User.Identity?.Name</MudText>
+            </Authorized>
+        </AuthorizeView>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_open" Elevation="1" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Responsive">
         <NavMenu />
-    </div>
+    </MudDrawer>
 
-    <main>
-        <div class="content px-4">
+    <MudMainContent Class="p-6">
+        <MudContainer MaxWidth="MaxWidth.False">
             @Body
-        </div>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _open = true;
+    void ToggleDrawer() => _open = !_open;
+}

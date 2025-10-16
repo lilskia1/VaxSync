@@ -210,7 +210,6 @@ namespace VaxSync.Web.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SchoolId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SecurityStamp")

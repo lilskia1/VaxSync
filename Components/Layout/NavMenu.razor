@@ -1,121 +1,37 @@
-﻿@implements IDisposable
+﻿@using MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
 
-@inject NavigationManager NavigationManager
+<MudNavMenu Dense="true">
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+        Home
+    </MudNavLink>
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">VaxSync.Web</a>
-    </div>
-</div>
+    <!-- Role-aware items -->
+    <AuthorizeView Roles="Admin">
+        <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
+            Admin dashboard
+        </MudNavLink>
+    </AuthorizeView>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+    <AuthorizeView Roles="SchoolNurse">
+        <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
+            Nurse dashboard
+        </MudNavLink>
+    </AuthorizeView>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
+    <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">About</MudNavLink>
 
-        <!-- Siempre visible -->
-        <div class="nav-item px-3">
-            <NavLink class="nav-link d-flex align-items-center gap-2" href="" Match="NavLinkMatch.All">
-                <i class="bi bi-house-door-fill"></i> Home
-            </NavLink>
-        </div>
+    <MudDivider Class="my-2" />
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link d-flex align-items-center gap-2" href="counter">
-                <i class="bi bi-plus-square-fill"></i> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link d-flex align-items-center gap-2" href="weather">
-                <i class="bi bi-list-nested"></i> Weather
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link d-flex align-items-center gap-2" href="auth">
-                <i class="bi bi-lock"></i> Auth Required
-            </NavLink>
-        </div>
-
-        <!-- Visible solo para Admin y SchoolNurse -->
-        <AuthorizeView Roles="Admin,SchoolNurse">
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link d-flex align-items-center gap-2" href="dashboard">
-                        <i class="bi bi-speedometer2"></i> Dashboard
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link d-flex align-items-center gap-2" href="student-lookup">
-                        <i class="bi bi-search"></i> Student Lookup
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link d-flex align-items-center gap-2" href="alerts">
-                        <i class="bi bi-exclamation-triangle-fill"></i> Alerts
-                    </NavLink>
-                </div>
-            </Authorized>
-        </AuthorizeView>
-
-        <!-- Visible solo cuando el usuario está autenticado -->
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link d-flex align-items-center gap-2" href="Account/Manage">
-                        <i class="bi bi-person-fill"></i> @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link d-flex align-items-center gap-2">
-                            <i class="bi bi-box-arrow-left"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </Authorized>
-
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link d-flex align-items-center gap-2" href="Account/Register">
-                        <i class="bi bi-person"></i> Register
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link d-flex align-items-center gap-2" href="Account/Login">
-                        <i class="bi bi-person-badge"></i> Login
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-    </nav>
-</div>
-
-@code {
-    private string? currentUrl;
-
-    protected override void OnInitialized()
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
-    }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
-}
+    <!-- Auth links -->
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="/Account/Manage" Icon="@Icons.Material.Filled.AccountCircle">Profile</MudNavLink>
+            <MudNavLink Href="/Account/Logout" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="/Account/Register" Icon="@Icons.Material.Filled.PersonAdd">Register</MudNavLink>
+            <MudNavLink Href="/Account/Login" Icon="@Icons.Material.Filled.Login">Login</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudNavMenu>

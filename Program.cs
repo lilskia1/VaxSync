@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 using VaxSync.Web.Components;
 using VaxSync.Web.Components.Account;
 using VaxSync.Web.Data;
@@ -12,7 +13,7 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-
+        
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
@@ -21,7 +22,8 @@ internal class Program
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
         builder.Services.AddScoped<AuditLogService>();
-
+        builder.Services.AddMudServices();
+        builder.Services.AddHostedService<UserSeedHostedService>();
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
