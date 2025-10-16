@@ -13,7 +13,7 @@ using System.Reflection;
 
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("aspnet-VaxSync.Web-39914b23-80e5-40ba-8e70-3e231481ee33")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("VaxSync.Web")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe0e7b9084c93d4972f471d98670edfb10c7d2f3")]
 [assembly: System.Reflection.AssemblyProductAttribute("VaxSync.Web")]
