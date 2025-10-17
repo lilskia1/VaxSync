@@ -234,6 +234,25 @@ namespace VaxSync.Web.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("VaxSync.Web.Data.School", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Schools");
+                });
+
             modelBuilder.Entity("VaxSync.Web.Models.Student", b =>
                 {
                     b.Property<int>("Id")
@@ -263,7 +282,12 @@ namespace VaxSync.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("SchoolId1")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SchoolId1");
 
                     b.ToTable("Students");
                 });
@@ -317,6 +341,18 @@ namespace VaxSync.Web.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.Student", b =>
+                {
+                    b.HasOne("VaxSync.Web.Data.School", null)
+                        .WithMany("Students")
+                        .HasForeignKey("SchoolId1");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Data.School", b =>
+                {
+                    b.Navigation("Students");
                 });
 #pragma warning restore 612, 618
         }

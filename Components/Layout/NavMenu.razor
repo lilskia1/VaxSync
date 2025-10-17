@@ -13,13 +13,18 @@
         </MudNavLink>
     </AuthorizeView>
 
+    <AuthorizeView Roles="Admin">
+        <MudNavLink Href="/student-lookup" Icon="@Icons.Material.Filled.Search">Lookup</MudNavLink>
+        <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">Alerts</MudNavLink>
+    </AuthorizeView>
+
     <AuthorizeView Roles="SchoolNurse">
         <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
             Nurse dashboard
         </MudNavLink>
+        <MudNavLink Href="/student-lookup" Icon="@Icons.Material.Filled.Search">Lookup</MudNavLink>
+        <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">Alerts</MudNavLink>
     </AuthorizeView>
-
-    <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">About</MudNavLink>
 
     <MudDivider Class="my-2" />
 
@@ -34,4 +39,6 @@
             <MudNavLink Href="/Account/Login" Icon="@Icons.Material.Filled.Login">Login</MudNavLink>
         </NotAuthorized>
     </AuthorizeView>
+    <MudDivider Class="my-2" />
+    <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">About</MudNavLink>
 </MudNavMenu>

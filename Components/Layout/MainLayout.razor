@@ -5,6 +5,7 @@
 <MudThemeProvider Theme="@AppTheme.Theme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
+<MudPopoverProvider />
 
 <MudLayout>
     <MudAppBar Elevation="4" Class="vx-appbar">
@@ -12,7 +13,7 @@
         <MudSpacer />
         <AuthorizeView>
             <Authorized>
-                <MudText Class="mr-3 text-white">Hello, @context.User.Identity?.Name</MudText>
+                <MudText Class="mr-4 text-white">Hello, @context.User.Identity?.Name</MudText>
             </Authorized>
         </AuthorizeView>
     </MudAppBar>
