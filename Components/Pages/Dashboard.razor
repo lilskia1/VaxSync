@@ -1,145 +1,27 @@
 @page "/dashboard"
-@using MudBlazor
-@using VaxSync.Web.Models
-@using Microsoft.AspNetCore.Identity
-@using VaxSync.Web.Data
 @using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.EntityFrameworkCore
-@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthState
-@inject ApplicationDbContext Db
+@inject NavigationManager Nav
 
-<PageTitle>Dashboard</PageTitle>
-
-<MudGrid Class="mb-6">
-  <MudItem xs="12">
-    <MudAlert Severity="Severity.Info" Elevation="0">
-      <MudText Typo="Typo.subtitle1" Color="Color.Secondary">Welcome, @userName.</MudText>
-      <MudText Class="mud-text-secondary">
-        Today is @DateTime.Now.ToString("dddd, MMMM dd, yyyy"). Up-to-date: @Totals.Compliant. Pending: @Totals.Pending.
-      </MudText>
-    </MudAlert>
-  </MudItem>
-
-  <MudItem xs="12" sm="6" md="3">
-    <MudPaper Elevation="1" Class="p-4">
-      <MudText Class="mud-text-secondary" Typo="Typo.overline">Total Students</MudText>
-      <MudText Typo="Typo.h4">@Totals.Total</MudText>
-    </MudPaper>
-  </MudItem>
-  <MudItem xs="12" sm="6" md="3">
-    <MudPaper Elevation="1" Class="p-4">
-      <MudText Class="mud-text-secondary" Typo="Typo.overline">Compliant</MudText>
-      <MudText Typo="Typo.h4" Color="Color.Success">@Totals.Compliant</MudText>
-    </MudPaper>
-  </MudItem>
-  <MudItem xs="12" sm="6" md="3">
-    <MudPaper Elevation="1" Class="p-4">
-      <MudText Class="mud-text-secondary" Typo="Typo.overline">Pending</MudText>
-      <MudText Typo="Typo.h4" Color="Color.Warning">@Totals.Pending</MudText>
-    </MudPaper>
-  </MudItem>
-  <MudItem xs="12" sm="6" md="3">
-    <MudPaper Elevation="1" Class="p-4">
-      <MudText Class="mud-text-secondary" Typo="Typo.overline">Not Compliant</MudText>
-      <MudText Typo="Typo.h4" Color="Color.Error">@Totals.NotCompliant</MudText>
-    </MudPaper>
-  </MudItem>
-
-  <MudItem xs="12">
-    <MudPaper Class="p-4 mb-6">
-      <MudText Typo="Typo.h6" Class="mb-2">Compliance Trend</MudText>
-      @if (Trend is null)
-      {
-        <MudSkeleton Height="220px" />
-      }
-      else
-      {
-        <MudChart ChartType="ChartType.Line" Labels="@Trend.Labels" Datasets="@Trend.Series" />
-      }
-    </MudPaper>
-  </MudItem>
-
-  <MudItem xs="12">
-    <MudPaper Class="p-0">
-      <MudTable Items="@students" Dense="true" Hover="true" RowsPerPage="10" Bordered="true" Breakpoint="Breakpoint.Sm">
-        <HeaderContent>
-          <MudTh>Full Name</MudTh>
-          <MudTh>School ID</MudTh>
-          <MudTh>DOB</MudTh>
-          <MudTh>Status</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-          <MudTd DataLabel="Full Name">@context.FullName</MudTd>
-          <MudTd DataLabel="School ID">@context.SchoolId</MudTd>
-          <MudTd DataLabel="DOB">@context.DateOfBirth</MudTd>
-                    <MudTd DataLabel="Status">
-                        @if (context.IsCompliant)
-                        {
-                            <MudChip T="string"
-                                     Color="Color.Success"
-                                     StartIcon="@Icons.Material.Filled.CheckCircle"
-                                     Size="Size.Small">
-                                Compliant
-                            </MudChip>
-                        }
-                        else
-                        {
-                            <MudChip T="string"
-                                     Color="Color.Warning"
-                                     StartIcon="@Icons.Material.Filled.Schedule"
-                                     Size="Size.Small">
-                                Pending
-                            </MudChip>
-                        }
-                    </MudTd>
-
-        </RowTemplate>
-      </MudTable>
-    </MudPaper>
-  </MudItem>
-</MudGrid>
+<div style="padding:2rem">
+    <p>Loading dashboard…</p>
+</div>
 
 @code {
-  private List<Student> students = new();
-  private string userName = "";
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
 
-  public record TotalsVm(int Total, int Compliant, int Pending, int NotCompliant);
-  public class TrendVm {
-    public List<string> Labels { get; set; } = new();
-    public List<ChartSeries> Series { get; set; } = new();
-  }
+        var state = await AuthState.GetAuthenticationStateAsync();
+        var user = state.User;
 
-  TotalsVm Totals = new(0,0,0,0);
-  TrendVm? Trend;
-
-  protected override async Task OnInitializedAsync()
-  {
-    var state = await AuthState.GetAuthenticationStateAsync();
-    var user = await UserManager.GetUserAsync(state.User);
-    if (user is null) return;
-
-    userName = user.UserName ?? "User";
-    var schoolId = user.SchoolId;
-
-    // existing query, scoped by SchoolId
-    students = Db.Students
-                 .Where(s => s.SchoolId == schoolId)
-                 .AsNoTracking()
-                 .ToList();
-
-    // totals
-    var total = students.Count;
-    var compliant = students.Count(s => s.IsCompliant);
-    var pending = total - compliant;
-    var notCompliant = pending; // adjust if you distinguish "pending" vs "not compliant"
-    Totals = new(total, compliant, pending, notCompliant);
-
-    // simple sample trend; replace with real monthly data later
-    await Task.Delay(100);
-    Trend = new TrendVm {
-      Labels = Enumerable.Range(0,12).Select(i => DateTime.UtcNow.AddMonths(-11 + i).ToString("MMM")).ToList(),
-      Series = new() { new ChartSeries { Name = "Compliant %", Data = new double[]{ 62,64,65,66,67,68,69,70,71,72,73,74 } } }
-    };
-  }
+        if (user.IsInRole("Admin"))
+            Nav.NavigateTo("/admin-dashboard", replace: true);
+        else if (user.IsInRole("SchoolNurse"))
+            Nav.NavigateTo("/nurse-dashboard", replace: true);
+        else if (user.IsInRole("Viewer"))
+            Nav.NavigateTo("/viewer-dashboard", replace: true);
+        else
+            Nav.NavigateTo("/", replace: true);
+    }
 }

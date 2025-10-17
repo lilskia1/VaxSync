@@ -1,20 +1,16 @@
-namespace VaxSync.Web.Models
+namespace VaxSync.Web.Models;
+
+public class Student
 {
-    public class Student
-    {
-        public int Id { get; set; }  // ID único del estudiante
-        public string FullName { get; set; } = string.Empty;  // Nombre completo
-        public string SchoolId { get; set; } = string.Empty;  // ID escolar o matrícula
-        public string DateOfBirth { get; set; } = string.Empty; // Fecha de nacimiento
-        public string Gender { get; set; } = string.Empty; // Género (opcional)
-        public string SSN { get; set; } = string.Empty;
-        public List<VaccineRecord> VaccineRecords { get; set; } = new();
-        
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string SchoolId { get; set; } = default!;
+    public School School { get; set; } = default!;
 
-public List<VaccineRecord> Vaccines { get; set; } = new();
+    public string FirstName { get; set; } = "";
+    public string LastName { get; set; } = "";
+    public DateTime DateOfBirth { get; set; }
 
+    public bool IsCompliant { get; set; }  // you can compute this later instead of storing
 
-        // ✅ Propiedad para saber si está al día con las vacunas
-        public bool IsCompliant { get; set; }
-    }
+    public ICollection<StudentVaccine> Vaccines { get; set; } = new List<StudentVaccine>();
 }

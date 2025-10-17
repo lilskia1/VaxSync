@@ -1,0 +1,70 @@
+@page "/admin-dashboard"
+@attribute [Authorize(Roles = "Admin")]
+@using Microsoft.EntityFrameworkCore
+@using VaxSync.Web.Data
+@using VaxSync.Web.Models
+@using VaxSync.Web.Components.Alerts
+@inject ApplicationDbContext Db
+
+<PageTitle>Admin Dashboard</PageTitle>
+
+<MudGrid Class="mb-6">
+    <MudItem xs="12">
+        <MudText Typo="Typo.h5">Administration Panel</MudText>
+        <MudText Class="mud-text-secondary">System-wide overview</MudText>
+    </MudItem>
+
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.overline" Class="mud-text-secondary">Total Students</MudText>
+            <MudText Typo="Typo.h4">@Totals.Total</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.overline" Class="mud-text-secondary">Compliant</MudText>
+            <MudText Typo="Typo.h4" Color="Color.Success">@Totals.Compliant</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.overline" Class="mud-text-secondary">Pending / Not</MudText>
+            <MudText Typo="Typo.h4" Color="Color.Warning">@Totals.NonCompliant</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.h6" Class="mb-2">Overdue alerts (top 5)</MudText>
+            <AlertsList Filter="AlertsList.AlertFilter.Overdue"
+                        MaxItems="5"
+                        ShowActions="true"
+                        ScopeToCurrentUser="false" />
+            <MudButton Class="mt-2" Variant="Variant.Text" Href="/alerts">View all alerts</MudButton>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.h6" Class="mb-2">Due-soon alerts (top 5)</MudText>
+            <AlertsList Filter="AlertsList.AlertFilter.Imminent"
+                        MaxItems="5"
+                        ShowActions="true"
+                        ScopeToCurrentUser="false" />
+            <MudButton Class="mt-2" Variant="Variant.Text" Href="/alerts">View all alerts</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public record TotalsVm(int Total, int Compliant, int NonCompliant);
+    TotalsVm Totals = new(0, 0, 0);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var students = await Db.Students.AsNoTracking().ToListAsync();
+        var total = students.Count;
+        var compliant = students.Count(s => s.IsCompliant);
+        Totals = new(total, compliant, total - compliant);
+    }
+}

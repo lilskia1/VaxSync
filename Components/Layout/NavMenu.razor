@@ -1,29 +1,64 @@
 ﻿@using MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
 
+@code {
+    private const bool AlertsEnabled = true;
+}
+
 <MudNavMenu Dense="true">
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
         Home
     </MudNavLink>
 
-    <!-- Role-aware items -->
+    <!-- Admin -->
     <AuthorizeView Roles="Admin">
+        <MudDivider Class="my-2" />
         <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
             Admin dashboard
         </MudNavLink>
+        <MudNavLink Href="/school-report" Icon="@Icons.Material.Filled.Assessment">
+            School report
+        </MudNavLink>
+        @if (AlertsEnabled)
+        {
+            <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">
+                Alerts
+            </MudNavLink>
+        }
     </AuthorizeView>
 
-    <AuthorizeView Roles="Admin">
-        <MudNavLink Href="/student-lookup" Icon="@Icons.Material.Filled.Search">Lookup</MudNavLink>
-        <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">Alerts</MudNavLink>
-    </AuthorizeView>
-
+    <!-- School Nurse -->
     <AuthorizeView Roles="SchoolNurse">
+        <MudDivider Class="my-2" />
         <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
             Nurse dashboard
         </MudNavLink>
-        <MudNavLink Href="/student-lookup" Icon="@Icons.Material.Filled.Search">Lookup</MudNavLink>
-        <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">Alerts</MudNavLink>
+        <MudNavLink Href="/school-report" Icon="@Icons.Material.Filled.Assessment">
+            School report
+        </MudNavLink>
+        @if (AlertsEnabled)
+        {
+            <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">
+                Alerts
+            </MudNavLink>
+        }
+    </AuthorizeView>
+
+    <!-- Viewer (read-only) -->
+    <AuthorizeView Roles="Viewer">
+        <MudDivider Class="my-2" />
+        <MudNavLink Href="/viewer-dashboard" Icon="@Icons.Material.Filled.Dashboard">
+            Dashboard
+        </MudNavLink>
+        <MudNavLink Href="/school-report" Icon="@Icons.Material.Filled.Assessment">
+            School report
+        </MudNavLink>
+        @if (AlertsEnabled)
+        {
+            <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">
+                Alerts
+            </MudNavLink>
+        }
     </AuthorizeView>
 
     <MudDivider Class="my-2" />
@@ -39,6 +74,7 @@
             <MudNavLink Href="/Account/Login" Icon="@Icons.Material.Filled.Login">Login</MudNavLink>
         </NotAuthorized>
     </AuthorizeView>
+
     <MudDivider Class="my-2" />
     <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">About</MudNavLink>
 </MudNavMenu>

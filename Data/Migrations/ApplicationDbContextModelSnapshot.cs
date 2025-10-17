@@ -17,28 +17,6 @@ namespace VaxSync.Web.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
 
-            modelBuilder.Entity("AuditLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("User")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AuditLogs");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -234,11 +212,32 @@ namespace VaxSync.Web.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("VaxSync.Web.Data.School", b =>
+            modelBuilder.Entity("VaxSync.Web.Models.AuditLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("User")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.School", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -255,26 +254,20 @@ namespace VaxSync.Web.Migrations
 
             modelBuilder.Entity("VaxSync.Web.Models.Student", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DateOfBirth")
-                        .IsRequired()
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
+                    b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Gender")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsCompliant")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SSN")
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -282,14 +275,119 @@ namespace VaxSync.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("SchoolId1")
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId", "LastName", "FirstName");
+
+                    b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.StudentRequiredDose", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DoseNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("VaccineScheduleId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolId1");
+                    b.HasIndex("StudentId");
 
-                    b.ToTable("Students");
+                    b.HasIndex("VaccineScheduleId");
+
+                    b.ToTable("StudentRequiredDoses");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.StudentVaccine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("DateGiven")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DoseNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("VaccineId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("VaccineId");
+
+                    b.ToTable("StudentVaccines");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.Vaccine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Vaccines");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.VaccineSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AgeRange")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("CatchUpEligible")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DoseNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VaccineId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VaccineId");
+
+                    b.ToTable("VaccineSchedules");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -345,14 +443,72 @@ namespace VaxSync.Web.Migrations
 
             modelBuilder.Entity("VaxSync.Web.Models.Student", b =>
                 {
-                    b.HasOne("VaxSync.Web.Data.School", null)
+                    b.HasOne("VaxSync.Web.Models.School", "School")
                         .WithMany("Students")
-                        .HasForeignKey("SchoolId1");
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
                 });
 
-            modelBuilder.Entity("VaxSync.Web.Data.School", b =>
+            modelBuilder.Entity("VaxSync.Web.Models.StudentRequiredDose", b =>
+                {
+                    b.HasOne("VaxSync.Web.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VaxSync.Web.Models.VaccineSchedule", "VaccineSchedule")
+                        .WithMany()
+                        .HasForeignKey("VaccineScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("VaccineSchedule");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.StudentVaccine", b =>
+                {
+                    b.HasOne("VaxSync.Web.Models.Student", "Student")
+                        .WithMany("Vaccines")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VaxSync.Web.Models.Vaccine", "Vaccine")
+                        .WithMany()
+                        .HasForeignKey("VaccineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Vaccine");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.VaccineSchedule", b =>
+                {
+                    b.HasOne("VaxSync.Web.Models.Vaccine", "Vaccine")
+                        .WithMany()
+                        .HasForeignKey("VaccineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vaccine");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.School", b =>
                 {
                     b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("VaxSync.Web.Models.Student", b =>
+                {
+                    b.Navigation("Vaccines");
                 });
 #pragma warning restore 612, 618
         }

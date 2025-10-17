@@ -261,7 +261,7 @@ namespace VaxSync.Web.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("VaxSync.Web.Models.VaccineRecord", b =>
+            modelBuilder.Entity("VaxSync.Web.Models.StudentVaccine", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -285,7 +285,7 @@ namespace VaxSync.Web.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("VaccineRecords");
+                    b.ToTable("StudentVaccines");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -339,7 +339,7 @@ namespace VaxSync.Web.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VaxSync.Web.Models.VaccineRecord", b =>
+            modelBuilder.Entity("VaxSync.Web.Models.StudentVaccine", b =>
                 {
                     b.HasOne("VaxSync.Web.Models.Student", "Student")
                         .WithMany()

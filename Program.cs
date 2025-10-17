@@ -18,13 +18,22 @@ internal class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
+        // ---- Database ----
+        var csFolder = Path.Combine(builder.Environment.ContentRootPath, "App_Data");
+        Directory.CreateDirectory(csFolder); // ensures folder exists even on new branches
+        var dbPath = Path.Combine(csFolder, "vaxsync_dev.db");
+
+        builder.Services.AddDbContext<ApplicationDbContext>(o =>
+            o.UseSqlite($"Data Source={dbPath}"));
+        builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
         // ---- AuthN / AuthZ for Blazor Identity components ----
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultScheme = IdentityConstants.ApplicationScheme;
             options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
         })
-                .AddIdentityCookies();
+        .AddIdentityCookies();
 
         builder.Services.AddAuthorization();
 
@@ -60,15 +69,28 @@ internal class Program
         builder.Services.AddMudServices();
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-        // ---- Database ----
-        var cs = builder.Configuration.GetConnectionString("DefaultConnection")
-                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-        builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseSqlite(cs));
-        builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
         var app = builder.Build();
 
-        // ---- One-time user creation (toggle via appsettings*.json) ----
+        // ---- Dev DB migrate + synthetic seed (idempotent) ----
+        if (app.Environment.IsDevelopment())
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            // Apply EF migrations first
+            await db.Database.MigrateAsync();
+
+            // Optional toggle in appsettings.Development.json:
+            // "Seed": { "Enabled": true }
+            var seedEnabled = app.Configuration.GetValue<bool?>("Seed:Enabled") ?? true;
+            if (seedEnabled)
+            {
+                // Seeds ~860 schools and ~241k students with plausible vaccine histories.
+                await DevSeeder.SeedAsync(db, targetStudentCount: 241_000, schoolCount: 860);
+            }
+        }
+
+        // ---- One-time Identity user creation (after DB is ready) ----
         if (app.Configuration.GetValue<bool>("OneTimeCreateUsers"))
         {
             using var scope = app.Services.CreateScope();
@@ -122,11 +144,8 @@ internal class Program
         app.MapRazorComponents<App>()
            .AddInteractiveServerRenderMode();
 
-        // Map the Blazor Identity endpoints (/Account/...)
         app.MapAdditionalIdentityEndpoints();
 
-        // IMPORTANT: do NOT map Razor Pages Identity UI now
-        // app.MapRazorPages();  // <-- remove/leave out
 
         app.Run();
     }
