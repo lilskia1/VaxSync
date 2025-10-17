@@ -1,105 +1,82 @@
 @page "/student-details/{id:int}"
+@using MudBlazor
 @using VaxSync.Web.Models
-@inject NavigationManager Navigation
+@inject NavigationManager Nav
 
 <PageTitle>Student Details</PageTitle>
 
-@if (student == null)
+@if (student is null)
 {
-    <p><em>Loading student data...</em></p>
+  <MudProgressCircular Indeterminate="true" />
 }
 else
 {
-    <div class="container mt-4">
-        <h2>@student.FullName</h2>
-        <p><strong>School ID:</strong> @student.SchoolId</p>
-        <p><strong>Date of Birth:</strong> @student.DateOfBirth</p>
-        <p><strong>Gender:</strong> @student.Gender</p>
+  <MudContainer Class="mt-4">
+    <MudText Typo="Typo.h5">@student.FullName</MudText>
+    <MudText Class="mud-text-secondary">School ID: @student.SchoolId • DOB: @student.DateOfBirth • Gender: @student.Gender</MudText>
 
-        <h4 class="mt-4">Vaccination Records</h4>
-        <table class="table table-bordered mt-2">
-            <thead class="table-light">
-                <tr>
-                    <th>Vaccine</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Icon</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var record in student.VaccineRecords)
-                {
-                    <tr>
-                        <td>@record.VaccineName</td>
-                        <td>@record.Date</td>
-                        <td>@record.Status</td>
-                        <td>
-                            @if (record.Status == "Compliant")
-                            {
-                                <span class="text-success">✅</span>
-                            }
-                            else if (record.Status == "Pending")
-                            {
-                                <span class="text-warning">⚠️</span>
-                            }
-                            else
-                            {
-                                <span class="text-danger">❌</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <button class="btn btn-secondary mt-3" @onclick="GoBack">← Back to Search</button>
-    </div>
+    <MudPaper Class="p-3 mt-3">
+      <MudText Typo="Typo.h6" Class="mb-2">Vaccination Records</MudText>
+      <MudTable Items="@student.VaccineRecords" Dense="true" Hover="true" Bordered="true">
+        <HeaderContent>
+          <MudTh>Vaccine</MudTh>
+          <MudTh>Date</MudTh>
+          <MudTh>Status</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+          <MudTd DataLabel="Vaccine">@context.VaccineName</MudTd>
+          <MudTd DataLabel="Date">@context.Date</MudTd>
+          <MudTd DataLabel="Status">
+            @if (context.Status == "Compliant")
+            {
+              <MudChip T="string" Color="Color.Success" StartIcon="@Icons.Material.Filled.CheckCircle" Size="Size.Small">Compliant</MudChip>
+            }
+            else if (context.Status == "Pending")
+            {
+              <MudChip T="string" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Schedule" Size="Size.Small">Pending</MudChip>
+            }
+            else
+            {
+              <MudChip T="string" Color="Color.Error" StartIcon="@Icons.Material.Filled.Error" Size="Size.Small">Not Compliant</MudChip>
+            }
+          </MudTd>
+        </RowTemplate>
+      </MudTable>
+            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Class="mt-2" OnClick="@(() => Nav.NavigateTo("/student-lookup"))">
+                Back to Search
+            </MudButton>
+        </MudPaper>
+  </MudContainer>
 }
 
 @code {
-    [Parameter]
-    public int id { get; set; }
+  [Parameter] public int id { get; set; }
+  Student? student;
 
-    private Student? student;
-
-    protected override void OnInitialized()
+  protected override void OnInitialized()
+  {
+    // your existing mock data; swap to DB when ready
+    var all = new List<Student>
     {
-        // Mock: Load a student by ID (replace with real DB lookup later)
-        var allStudents = new List<Student>
-        {
-            new Student
-            {
-                Id = 1,
-                FullName = "Ana Rivera",
-                SchoolId = "S123",
-                DateOfBirth = "2010-01-01",
-                Gender = "F",
-                VaccineRecords = new List<VaccineRecord>
-                {
-                    new VaccineRecord { VaccineName = "MMR", Date = "2022-08-15", Status = "Compliant" },
-                    new VaccineRecord { VaccineName = "Polio", Date = "2022-08-20", Status = "Pending" }
-                }
-            },
-            new Student
-            {
-                Id = 2,
-                FullName = "Carlos Pérez",
-                SchoolId = "S124",
-                DateOfBirth = "2009-03-15",
-                Gender = "M",
-                VaccineRecords = new List<VaccineRecord>
-                {
-                    new VaccineRecord { VaccineName = "Hepatitis B", Date = "2021-06-01", Status = "Not Compliant" },
-                    new VaccineRecord { VaccineName = "Varicella", Date = "2022-05-12", Status = "Compliant" }
-                }
-            }
-        };
+      new Student
+      {
+        Id = 1, FullName = "Ana Rivera", SchoolId = "S123", DateOfBirth = "2010-01-01", Gender = "F",
+        VaccineRecords = new() {
+          new VaccineRecord { VaccineName = "MMR", Date = "2022-08-15", Status = "Compliant" },
+          new VaccineRecord { VaccineName = "Polio", Date = "2022-08-20", Status = "Pending" }
+        }
+      },
+      new Student
+      {
+        Id = 2, FullName = "Carlos Pérez", SchoolId = "S124", DateOfBirth = "2009-03-15", Gender = "M",
+        VaccineRecords = new() {
+          new VaccineRecord { VaccineName = "Hepatitis B", Date = "2021-06-01", Status = "Not Compliant" },
+          new VaccineRecord { VaccineName = "Varicella", Date = "2022-05-12", Status = "Compliant" }
+        }
+      }
+    };
 
-        student = allStudents.FirstOrDefault(s => s.Id == id);
-    }
-
-    private void GoBack()
-    {
-        Navigation.NavigateTo("/student-lookup");
-    }
+    student = all.FirstOrDefault(s => s.Id == id);
+  }
 }

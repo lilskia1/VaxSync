@@ -9,11 +9,11 @@ main[b-bu9fxpipue] {
 }
 
 .sidebar[b-bu9fxpipue] {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    background: linear-gradient(180deg, #0B3D91 0%, #1BA1E2 100%);
 }
 
 .top-row[b-bu9fxpipue] {
-    background-color: #f7f7f7;
+    background: linear-gradient(90deg, #0B3D91 0%, #1BA1E2 100%);
     border-bottom: 1px solid #d6d5d5;
     justify-content: flex-end;
     height: 3.5rem;
@@ -27,23 +27,23 @@ main[b-bu9fxpipue] {
         text-decoration: none;
     }
 
-    .top-row[b-bu9fxpipue]  a:hover, .top-row[b-bu9fxpipue]  .btn-link:hover {
-        text-decoration: underline;
-    }
+        .top-row[b-bu9fxpipue]  a:hover, .top-row[b-bu9fxpipue]  .btn-link:hover {
+            text-decoration: underline;
+        }
 
-    .top-row[b-bu9fxpipue]  a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        .top-row[b-bu9fxpipue]  a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
 @media (max-width: 640.98px) {
     .top-row[b-bu9fxpipue] {
         justify-content: space-between;
     }
 
-    .top-row[b-bu9fxpipue]  a, .top-row[b-bu9fxpipue]  .btn-link {
-        margin-left: 0;
-    }
+        .top-row[b-bu9fxpipue]  a, .top-row[b-bu9fxpipue]  .btn-link {
+            margin-left: 0;
+        }
 }
 
 @media (min-width: 641px) {
@@ -64,11 +64,11 @@ main[b-bu9fxpipue] {
         z-index: 1;
     }
 
-    .top-row.auth[b-bu9fxpipue]  a:first-child {
-        flex: 1;
-        text-align: right;
-        width: 0;
-    }
+        .top-row.auth[b-bu9fxpipue]  a:first-child {
+            flex: 1;
+            text-align: right;
+            width: 0;
+        }
 
     .top-row[b-bu9fxpipue], article[b-bu9fxpipue] {
         padding-left: 2rem !important;
@@ -95,4 +95,14 @@ main[b-bu9fxpipue] {
         position: absolute;
         right: 0.75rem;
         top: 0.5rem;
+    }
+
+.vx-appbar[b-bu9fxpipue] {
+    background: linear-gradient(135deg, #0B3D91, #1BA1E2);
+    color: #fff;
+}
+
+    .vx-appbar .mud-typography[b-bu9fxpipue],
+    .vx-appbar .mud-icon-button[b-bu9fxpipue] {
+        color: #fff !important;
     }

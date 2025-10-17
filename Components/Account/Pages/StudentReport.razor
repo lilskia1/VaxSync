@@ -1,75 +1,94 @@
 @page "/student-report"
+@using MudBlazor
 @using VaxSync.Web.Models
-@inject NavigationManager Navigation
-@inject IJSRuntime JSRuntime
-@using System.Text
+@inject IJSRuntime JS
 
 <PageTitle>Student Report</PageTitle>
 
-<h3>Student Report Generator</h3>
+<MudPaper Class="p-4">
+    <MudText Typo="Typo.h5" Class="mb-2">Student Report Generator</MudText>
 
-<div class="mb-3">
-    <input class="form-control" placeholder="Enter Student ID or SSN" @bind="searchTerm" />
-</div>
+    <MudGrid Class="mb-3">
+        <MudItem xs="12" sm="8" md="6">
+            <MudTextField @bind-Value="searchTerm"
+                          Label="Student ID or SSN"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          DebounceInterval="250" />
+        </MudItem>
+        <MudItem xs="12" sm="4" md="6" Class="d-flex align-end">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Download"
+                       OnClick="GenerateReport">
+                Download TXT Report
+            </MudButton>
+        </MudItem>
+    </MudGrid>
 
-<button class="btn btn-primary mb-4" @onclick="GeneratePdf">Download PDF Report</button>
-
-@if (pdfGenerated)
-{
-    <div class="alert alert-success">PDF generated! Check your downloads.</div>
-}
+    @if (notFound)
+    {
+        <MudAlert Severity="Severity.Warning" Elevation="0">No student found for that ID or SSN.</MudAlert>
+    }
+    @if (generated)
+    {
+        <MudAlert Severity="Severity.Success" Elevation="0">Report generated. Check your downloads.</MudAlert>
+    }
+</MudPaper>
 
 @code {
-    private string searchTerm = string.Empty;
-    private bool pdfGenerated = false;
+    string searchTerm = "";
+    bool generated = false;
+    bool notFound = false;
 
-    private List<Student> students = new()
+    List<Student> students = new()
+  {
+    new Student
     {
-        new Student
-        {
-            Id = 1,
-            FullName = "Ana Rivera",
-            SchoolId = "S123",
-            SSN = "123-45-6789",
-            DateOfBirth = "2010-01-01",
-            Gender = "F",
-            IsCompliant = true,
-            VaccineRecords = new List<VaccineRecord>
-            {
-                new VaccineRecord { VaccineName = "MMR", Date = "2021-08-01", Status = "Compliant" },
-                new VaccineRecord { VaccineName = "DTaP", Date = "2023-04-15", Status = "Pending" }
-            }
-        }
-    };
+      Id = 1,
+      FullName = "Ana Rivera",
+      SchoolId = "S123",
+      SSN = "123-45-6789",
+      DateOfBirth = "2010-01-01",
+      Gender = "F",
+      IsCompliant = true,
+      VaccineRecords = new()
+      {
+        new VaccineRecord { VaccineName = "MMR", Date = "2021-08-01", Status = "Compliant" },
+        new VaccineRecord { VaccineName = "DTaP", Date = "2023-04-15", Status = "Pending" }
+      }
+    }
+  };
 
-    private async Task GeneratePdf()
+    async Task GenerateReport()
     {
-        var student = students.FirstOrDefault(s =>
-            s.SSN.Equals(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            s.SchoolId.Equals(searchTerm, StringComparison.OrdinalIgnoreCase));
+        generated = false;
+        notFound = false;
 
-        if (student is null)
+        var s = students.FirstOrDefault(x =>
+                  x.SSN.Equals(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                  x.SchoolId.Equals(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+        if (s is null)
         {
-            pdfGenerated = false;
+            notFound = true;
             return;
         }
 
-        var content = new StringBuilder();
-        content.AppendLine($"Student Report for {student.FullName}");
-        content.AppendLine($"School ID: {student.SchoolId}");
-        content.AppendLine($"Date of Birth: {student.DateOfBirth}");
-        content.AppendLine($"Gender: {student.Gender}");
-        content.AppendLine("");
-        content.AppendLine("Vaccination Records:");
-        foreach (var v in student.VaccineRecords)
-        {
-            content.AppendLine($"- {v.VaccineName} ({v.Date}): {v.Status}");
-        }
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"Student Report for {s.FullName}");
+        sb.AppendLine($"School ID: {s.SchoolId}");
+        sb.AppendLine($"Date of Birth: {s.DateOfBirth}");
+        sb.AppendLine($"Gender: {s.Gender}");
+        sb.AppendLine();
+        sb.AppendLine("Vaccination Records:");
+        foreach (var v in s.VaccineRecords)
+            sb.AppendLine($"- {v.VaccineName} ({v.Date}): {v.Status}");
 
-        var bytes = Encoding.UTF8.GetBytes(content.ToString());
-        var base64 = Convert.ToBase64String(bytes);
-        await JSRuntime.InvokeVoidAsync("downloadFile", $"StudentReport_{student.SchoolId}.txt", base64);
+        var base64 = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(sb.ToString()));
+        await JS.InvokeVoidAsync("downloadFile", $"StudentReport_{s.SchoolId}.txt", base64);
 
-        pdfGenerated = true;
+        generated = true;
     }
 }
