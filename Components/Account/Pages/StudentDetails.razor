@@ -1,82 +1,75 @@
-@page "/student-details/{id:int}"
+@page "/student-details/{id}"
 @using MudBlazor
+@using Microsoft.EntityFrameworkCore
 @using VaxSync.Web.Models
+@using VaxSync.Web.Data
+@inject ApplicationDbContext Db
 @inject NavigationManager Nav
 
 <PageTitle>Student Details</PageTitle>
 
-@if (student is null)
+@if (isLoading)
 {
-  <MudProgressCircular Indeterminate="true" />
+    <MudProgressCircular Indeterminate="true" />
+}
+else if (student is null)
+{
+    <MudAlert Severity="Severity.Warning">Student not found.</MudAlert>
 }
 else
 {
-  <MudContainer Class="mt-4">
-    <MudText Typo="Typo.h5">@student.FullName</MudText>
-    <MudText Class="mud-text-secondary">School ID: @student.SchoolId • DOB: @student.DateOfBirth • Gender: @student.Gender</MudText>
+    <MudContainer Class="mt-4">
+        <MudText Typo="Typo.h5">@($"{student.FirstName} {student.LastName}")</MudText>
+        <MudText Class="mud-text-secondary">
+            School: @(student.School?.Code ?? student.SchoolId)
+            • DOB: @($"{student.DateOfBirth:yyyy-MM-dd}")
+        </MudText>
 
-    <MudPaper Class="p-3 mt-3">
-      <MudText Typo="Typo.h6" Class="mb-2">Vaccination Records</MudText>
-      <MudTable Items="@student.VaccineRecords" Dense="true" Hover="true" Bordered="true">
-        <HeaderContent>
-          <MudTh>Vaccine</MudTh>
-          <MudTh>Date</MudTh>
-          <MudTh>Status</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-          <MudTd DataLabel="Vaccine">@context.VaccineName</MudTd>
-          <MudTd DataLabel="Date">@context.Date</MudTd>
-          <MudTd DataLabel="Status">
-            @if (context.Status == "Compliant")
-            {
-              <MudChip T="string" Color="Color.Success" StartIcon="@Icons.Material.Filled.CheckCircle" Size="Size.Small">Compliant</MudChip>
-            }
-            else if (context.Status == "Pending")
-            {
-              <MudChip T="string" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Schedule" Size="Size.Small">Pending</MudChip>
-            }
-            else
-            {
-              <MudChip T="string" Color="Color.Error" StartIcon="@Icons.Material.Filled.Error" Size="Size.Small">Not Compliant</MudChip>
-            }
-          </MudTd>
-        </RowTemplate>
-      </MudTable>
-            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ArrowBack"
-                       Class="mt-2" OnClick="@(() => Nav.NavigateTo("/student-lookup"))">
+        <MudPaper Class="p-3 mt-3">
+            <MudText Typo="Typo.h6" Class="mb-2">Vaccination Records</MudText>
+
+            <MudTable Items="@(student.Vaccines ?? new List<StudentVaccine>())" Dense="true" Hover="true" Bordered="true">
+                <HeaderContent>
+                    <MudTh>Vaccine</MudTh>
+                    <MudTh>Dose</MudTh>
+                    <MudTh>Date</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Vaccine">@context.Vaccine?.Name</MudTd>
+                    <MudTd DataLabel="Dose">@context.DoseNumber</MudTd>
+                    <MudTd DataLabel="Date">@($"{context.DateGiven:yyyy-MM-dd}")</MudTd>
+                </RowTemplate>
+            </MudTable>
+
+            <MudButton Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Class="mt-2"
+                       OnClick="GoBack">
                 Back to Search
             </MudButton>
         </MudPaper>
-  </MudContainer>
+    </MudContainer>
 }
 
 @code {
-  [Parameter] public int id { get; set; }
-  Student? student;
+    [Parameter] public string id { get; set; } = ""; // Student.Id is string in your model
 
-  protected override void OnInitialized()
-  {
-    // your existing mock data; swap to DB when ready
-    var all = new List<Student>
+    private Student? student;
+    private bool isLoading = true;
+
+    protected override async Task OnParametersSetAsync()
     {
-      new Student
-      {
-        Id = 1, FullName = "Ana Rivera", SchoolId = "S123", DateOfBirth = "2010-01-01", Gender = "F",
-        VaccineRecords = new() {
-          new VaccineRecord { VaccineName = "MMR", Date = "2022-08-15", Status = "Compliant" },
-          new VaccineRecord { VaccineName = "Polio", Date = "2022-08-20", Status = "Pending" }
-        }
-      },
-      new Student
-      {
-        Id = 2, FullName = "Carlos Pérez", SchoolId = "S124", DateOfBirth = "2009-03-15", Gender = "M",
-        VaccineRecords = new() {
-          new VaccineRecord { VaccineName = "Hepatitis B", Date = "2021-06-01", Status = "Not Compliant" },
-          new VaccineRecord { VaccineName = "Varicella", Date = "2022-05-12", Status = "Compliant" }
-        }
-      }
-    };
+        isLoading = true;
 
-    student = all.FirstOrDefault(s => s.Id == id);
-  }
+        student = await Db.Students
+            .Include(s => s.School)
+            .Include(s => s.Vaccines)
+                .ThenInclude(sv => sv.Vaccine)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        isLoading = false;
+    }
+
+    private void GoBack() => Nav.NavigateTo("/student-lookup");
 }

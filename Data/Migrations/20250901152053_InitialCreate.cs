@@ -43,7 +43,7 @@ namespace VaxSync.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "VaccineRecords",
+                name: "StudentVaccines",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -55,9 +55,9 @@ namespace VaxSync.Web.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VaccineRecords", x => x.Id);
+                    table.PrimaryKey("PK_StudentVaccines", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_VaccineRecords_Students_StudentId",
+                        name: "FK_StudentVaccines_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id",
@@ -65,8 +65,8 @@ namespace VaxSync.Web.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_VaccineRecords_StudentId",
-                table: "VaccineRecords",
+                name: "IX_StudentVaccines_StudentId",
+                table: "StudentVaccines",
                 column: "StudentId");
         }
 
@@ -77,7 +77,7 @@ namespace VaxSync.Web.Migrations
                 name: "AuditLogs");
 
             migrationBuilder.DropTable(
-                name: "VaccineRecords");
+                name: "StudentVaccines");
 
             migrationBuilder.DropTable(
                 name: "Students");

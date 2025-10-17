@@ -1,0 +1,70 @@
+@page "/nurse-dashboard"
+@attribute [Authorize(Roles = "SchoolNurse")]
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using VaxSync.Web.Data
+@using VaxSync.Web.Models
+@using VaxSync.Web.Components.Alerts
+@inject ApplicationDbContext Db
+@inject AuthenticationStateProvider AuthState
+@inject UserManager<ApplicationUser> UserManager
+
+<PageTitle>Nurse Dashboard</PageTitle>
+
+<MudGrid Class="mb-6">
+    <MudItem xs="12">
+        <MudText Typo="Typo.h5">Nurse Panel</MudText>
+        <MudText Class="mud-text-secondary">Your assigned school overview</MudText>
+    </MudItem>
+
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.overline" Class="mud-text-secondary">Students</MudText>
+            <MudText Typo="Typo.h4">@Totals.Total</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.overline" Class="mud-text-secondary">Compliant</MudText>
+            <MudText Typo="Typo.h4" Color="Color.Success">@Totals.Compliant</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.overline" Class="mud-text-secondary">Pending / Not</MudText>
+            <MudText Typo="Typo.h4" Color="Color.Warning">@Totals.NonCompliant</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Class="p-4">
+            <MudText Typo="Typo.h6" Class="mb-2">Overdue alerts (top 5)</MudText>
+            <AlertsList Filter="AlertsList.AlertFilter.Overdue"
+                        ScopeToCurrentUser="true"
+                        MaxItems="5"
+                        ShowActions="true" />
+            <MudButton Class="mt-2" Variant="Variant.Text" Href="/alerts">View all alerts</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public record TotalsVm(int Total, int Compliant, int NonCompliant);
+    TotalsVm Totals = new(0, 0, 0);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(state.User);
+        var schoolId = user?.SchoolId;
+        if (string.IsNullOrWhiteSpace(schoolId)) return;
+
+        var students = await Db.Students.AsNoTracking()
+                        .Where(s => s.SchoolId == schoolId)
+                        .ToListAsync();
+
+        var total = students.Count;
+        var compliant = students.Count(s => s.IsCompliant);
+        Totals = new(total, compliant, total - compliant);
+    }
+}

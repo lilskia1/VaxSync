@@ -1,0 +1,149 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Identity
+@using VaxSync.Web.Data
+@using VaxSync.Web.Models
+@using MudBlazor
+@using Microsoft.AspNetCore.Components
+@inject ApplicationDbContext Db
+@inject AuthenticationStateProvider AuthState
+@inject UserManager<ApplicationUser> UserManager
+
+<MudTable Items="_items" Dense="true" Hover="true" RowsPerPage="10">
+    <HeaderContent>
+        <MudTh>Student</MudTh>
+        <MudTh>Vaccine</MudTh>
+        <MudTh>Dose</MudTh>
+        <MudTh>Due Date</MudTh>
+        <MudTh>Status</MudTh>
+        @if (ShowActions)
+        {
+            <MudTh>Actions</MudTh>
+        }
+        else
+        {
+            <MudTh></MudTh>
+        }
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>@($"{context.StudentFirstName} {context.StudentLastName}")</MudTd>
+        <MudTd>@context.VaccineName</MudTd>
+        <MudTd>@context.DoseNumber</MudTd>
+        <MudTd>@context.DueDate.ToString("yyyy-MM-dd")</MudTd>
+        <MudTd>
+            @{
+                RenderFragment statusChip = context.Overdue
+                ? @<MudChip T="string" Color="Color.Error">Overdue</MudChip>
+                        : (context.Imminent
+                        ? @<MudChip T="string" Color="Color.Warning">Due Soon</MudChip>
+                        : @<MudChip T="string" Color="Color.Success">OK</MudChip>);
+            }
+            @statusChip
+        </MudTd>
+
+        @if (ShowActions)
+        {
+            <MudTd class="text-nowrap">
+                <MudButton Variant="Variant.Outlined" Size="Size.Small"
+                           OnClick="@(() => SafeViewAsync(context.StudentId))">
+                    View
+                </MudButton>
+
+                <MudButton Class="ml-2" Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small"
+                           OnClick="@(() => SafeDownloadAsync(context.StudentId))">
+                    PDF
+                </MudButton>
+            </MudTd>
+        }
+        else
+        {
+            <MudTd></MudTd>
+        }
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private Task SafeViewAsync(string id)
+    => OnView.HasDelegate ? OnView.InvokeAsync(id) : Task.CompletedTask;
+
+    private Task SafeDownloadAsync(string id)
+        => OnDownload.HasDelegate ? OnDownload.InvokeAsync(id) : Task.CompletedTask;
+
+    // Enum
+    public enum AlertFilter { All, Imminent, Overdue }
+
+    // Parameters
+    [Parameter] public string? SchoolId { get; set; }
+    [Parameter] public AlertFilter Filter { get; set; } = AlertFilter.All;
+    [Parameter] public int? MaxItems { get; set; }
+    [Parameter] public bool ShowActions { get; set; } = false;
+    [Parameter] public bool ScopeToCurrentUser { get; set; } = false;
+    [Parameter] public EventCallback<string> OnView { get; set; }
+    [Parameter] public EventCallback<string> OnDownload { get; set; }
+
+    private List<AlertVm> _items = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        IQueryable<StudentRequiredDose> q =
+          Db.StudentRequiredDoses
+            .AsNoTracking()
+            .Include(r => r.Student)
+            .Include(r => r.VaccineSchedule)
+              .ThenInclude(vs => vs.Vaccine);
+
+        if (!string.IsNullOrWhiteSpace(SchoolId))
+            q = q.Where(r => r.Student.SchoolId == SchoolId);
+
+        if (ScopeToCurrentUser && string.IsNullOrWhiteSpace(SchoolId))
+        {
+            var state = await AuthState.GetAuthenticationStateAsync();
+            var user = await UserManager.GetUserAsync(state.User);
+            if (state.User.IsInRole("SchoolNurse") || state.User.IsInRole("Viewer"))
+            {
+                if (!string.IsNullOrEmpty(user?.SchoolId))
+                    q = q.Where(r => r.Student.SchoolId == user.SchoolId);
+            }
+        }
+
+        var data = await q.ToListAsync();
+
+        var filtered = data.Where(r => Filter switch
+        {
+            AlertFilter.Overdue => r.Overdue,
+            AlertFilter.Imminent => r.Imminent,
+            _ => true
+        });
+
+        _items = filtered
+          .Select(r => new AlertVm
+          {
+              StudentId = r.Student.Id,
+              StudentFirstName = r.Student.FirstName,
+              StudentLastName = r.Student.LastName,
+              VaccineName = r.VaccineSchedule.Vaccine.Name,
+              DoseNumber = r.DoseNumber,
+              DueDate = r.DueDate,
+              Overdue = r.Overdue,
+              Imminent = r.Imminent
+          })
+          .OrderByDescending(a => a.Overdue)
+          .ThenBy(a => a.DueDate)
+          .ToList();
+
+        if (MaxItems is int take)
+            _items = _items.Take(take).ToList();
+    }
+
+    public class AlertVm
+    {
+        public string StudentId { get; set; } = "";
+        public string StudentFirstName { get; set; } = "";
+        public string StudentLastName { get; set; } = "";
+        public string VaccineName { get; set; } = "";
+        public int DoseNumber { get; set; }
+        public DateTime DueDate { get; set; }
+        public bool Overdue { get; set; }
+        public bool Imminent { get; set; }
+    }
+}

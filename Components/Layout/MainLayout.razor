@@ -1,10 +1,12 @@
 ﻿@inherits LayoutComponentBase
-@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
 @using VaxSync.Web.Components.Layout
 
 <MudThemeProvider Theme="@AppTheme.Theme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
+<MudPopoverProvider />
 
 <MudLayout>
     <MudAppBar Elevation="4" Class="vx-appbar">
@@ -12,18 +14,20 @@
         <MudSpacer />
         <AuthorizeView>
             <Authorized>
-                <MudText Class="mr-3 text-white">Hello, @context.User.Identity?.Name</MudText>
+                <MudText Class="mr-4 text-white">Hello, @context.User.Identity?.Name</MudText>
             </Authorized>
         </AuthorizeView>
     </MudAppBar>
 
-    <MudDrawer @bind-Open="_open" Elevation="1" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Responsive">
+    <MudDrawer @bind-Open="_open" Elevation="1"
+               ClipMode="DrawerClipMode.Always"
+               Variant="DrawerVariant.Responsive">
         <NavMenu />
     </MudDrawer>
 
     <MudMainContent Class="p-6">
         <MudContainer MaxWidth="MaxWidth.False">
-            @Body
+            @Body   @* layout content placeholder *@
         </MudContainer>
     </MudMainContent>
 </MudLayout>

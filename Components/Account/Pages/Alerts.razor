@@ -1,134 +1,35 @@
 @page "/alerts"
-@using VaxSync.Web.Models
+@using VaxSync.Web.Components.Alerts
+@using MudBlazor
 
 <PageTitle>Vaccination Alerts</PageTitle>
 
-<h3 class="mb-4">Vaccination Alerts</h3>
+<MudGrid>
+  <MudItem xs="12" sm="6" md="4">
+    <MudSelect T="AlertsList.AlertFilter" Label="Filter" @bind-Value="_filter">
+      <MudSelectItem T="AlertsList.AlertFilter" Value="@(AlertsList.AlertFilter.All)">All</MudSelectItem>
+      <MudSelectItem T="AlertsList.AlertFilter" Value="@(AlertsList.AlertFilter.Imminent)">⚠️ Due Soon</MudSelectItem>
+      <MudSelectItem T="AlertsList.AlertFilter" Value="@(AlertsList.AlertFilter.Overdue)">❗ Overdue</MudSelectItem>
+    </MudSelect>
+  </MudItem>
 
-<div class="mb-3">
-    <label class="form-label">Filter by type:</label>
-    <select class="form-select w-auto" @bind="selectedFilter">
-        <option value="All">All</option>
-        <option value="Urgent">❗ Urgent</option>
-        <option value="Pending">⚠️ Pending</option>
-    </select>
-</div>
-
-@if (filteredAlerts.Count == 0)
-{
-    <p class="text-success">✅ No alerts found for selected filter.</p>
-}
-else
-{
-    <ul class="list-group">
-        @foreach (var alert in filteredAlerts)
-        {
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <strong>@alert.StudentName</strong><br />
-                    <span class="text-muted">@alert.Message</span>
-                </div>
-                <span class="fs-4">@alert.Type</span>
-            </li>
-        }
-    </ul>
-}
+  <MudItem xs="12" class="mt-4">
+    <AlertsList Filter="_filter"
+                ScopeToCurrentUser="true"
+                ShowActions="true"
+                OnView="GoToDetails"
+                OnDownload="DownloadPdf" />
+  </MudItem>
+</MudGrid>
 
 @code {
-    private List<Alert> allAlerts = new();
-    private List<Alert> filteredAlerts = new();
-    private string selectedFilter = "All";
+  private AlertsList.AlertFilter _filter = AlertsList.AlertFilter.All;
 
-    protected override void OnInitialized()
-    {
-        GenerateMockData();
-        ApplyFilter();
-    }
+  private void GoToDetails(string studentId)
+    => Navigation.NavigateTo($"/student-details/{studentId}");
 
-    private void ApplyFilter()
-    {
-        filteredAlerts = selectedFilter switch
-        {
-            "Urgent" => allAlerts.Where(a => a.Type == "❗").ToList(),
-            "Pending" => allAlerts.Where(a => a.Type == "⚠️").ToList(),
-            _ => allAlerts.ToList()
-        };
-    }
+  private void DownloadPdf(string studentId)
+    => Navigation.NavigateTo($"/student-report/{studentId}");
 
-    private void GenerateMockData()
-    {
-        var students = new List<Student>
-        {
-            new Student
-            {
-                Id = 1,
-                FullName = "Ana Rivera",
-                VaccineRecords = new List<VaccineRecord>
-                {
-                    new VaccineRecord { VaccineName = "MMR", Date = DateTime.Today.AddDays(10).ToString("yyyy-MM-dd"), Status = "Compliant" },
-                    new VaccineRecord { VaccineName = "Polio", Date = "2021-01-01", Status = "Pending" }
-                }
-            },
-            new Student
-            {
-                Id = 2,
-                FullName = "Carlos Pérez",
-                VaccineRecords = new List<VaccineRecord>
-                {
-                    new VaccineRecord { VaccineName = "Hepatitis B", Date = "2022-09-10", Status = "Not Compliant" }
-                }
-            },
-            new Student
-            {
-                Id = 3,
-                FullName = "Laura Vélez",
-                VaccineRecords = new List<VaccineRecord>
-                {
-                    new VaccineRecord { VaccineName = "Varicella", Date = DateTime.Today.AddDays(3).ToString("yyyy-MM-dd"), Status = "Compliant" }
-                }
-            }
-        };
-
-        foreach (var student in students)
-        {
-            foreach (var vaccine in student.VaccineRecords)
-            {
-                if (vaccine.Status != "Compliant")
-                {
-                    allAlerts.Add(new Alert
-                    {
-                        StudentName = student.FullName,
-                        Message = $"{vaccine.VaccineName} is {vaccine.Status.ToLower()} since {vaccine.Date}",
-                        Type = "⚠️"
-                    });
-                }
-                else if (DateTime.TryParse(vaccine.Date, out var dueDate))
-                {
-                    var daysLeft = (dueDate - DateTime.Today).TotalDays;
-                    if (daysLeft <= 30 && daysLeft >= 0)
-                    {
-                        allAlerts.Add(new Alert
-                        {
-                            StudentName = student.FullName,
-                            Message = $"{vaccine.VaccineName} due in {daysLeft} days ({vaccine.Date})",
-                            Type = "❗"
-                        });
-                    }
-                }
-            }
-        }
-    }
-
-    private class Alert
-    {
-        public string StudentName { get; set; } = "";
-        public string Message { get; set; } = "";
-        public string Type { get; set; } = ""; // ⚠️ or ❗
-    }
-
-    // Detect when dropdown changes
-    protected override void OnParametersSet()
-    {
-        ApplyFilter();
-    }
+  [Inject] private NavigationManager Navigation { get; set; } = default!;
 }

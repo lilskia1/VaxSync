@@ -1,11 +1,15 @@
 @page "/school-report"
+@using VaxSync.Web.Data
 @using VaxSync.Web.Models
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext Db
+@inject AuthenticationStateProvider AuthState
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
 
 <PageTitle>School Reports</PageTitle>
 
 <h3 class="mb-4">School Compliance Report</h3>
 
-<!-- Filtro por estatus -->
 <div class="mb-3">
     <label class="form-label">Filter by Status:</label>
     <select class="form-select" @bind="selectedStatus">
@@ -16,7 +20,6 @@
     </select>
 </div>
 
-<!-- Tabla de estudiantes -->
 <table class="table table-bordered table-striped">
     <thead class="table-light">
         <tr>
@@ -29,8 +32,8 @@
         @foreach (var student in FilteredStudents)
         {
             <tr>
-                <td>@student.SchoolId</td>
-                <td>@student.FullName</td>
+                <td>@student.Id</td>
+                <td>@($"{student.FirstName} {student.LastName}")</td>
                 <td>
                     @if (student.IsCompliant)
                     {
@@ -46,7 +49,6 @@
     </tbody>
 </table>
 
-<!-- Botón para exportar -->
 <button class="btn btn-outline-primary" @onclick="ExportReport">
     📄 Export Report (Coming Soon)
 </button>
@@ -59,22 +61,31 @@
         : students.Where(s =>
             selectedStatus == "Compliant" && s.IsCompliant ||
             selectedStatus == "Pending" && !s.IsCompliant ||
-            selectedStatus == "Not Compliant" && !s.IsCompliant); // Se puede refinar luego
+            selectedStatus == "Not Compliant" && !s.IsCompliant);
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Datos simulados
-        students = new()
+        var state = await AuthState.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(state.User);
+
+        // For school-level users, filter by their assigned school
+        if (user is not null && !string.IsNullOrEmpty(user.SchoolId))
         {
-            new Student { Id = 1, FullName = "Ana Rivera", SchoolId = "S123", IsCompliant = true },
-            new Student { Id = 2, FullName = "Carlos Pérez", SchoolId = "S124", IsCompliant = false },
-            new Student { Id = 3, FullName = "Laura Vélez", SchoolId = "S125", IsCompliant = true }
-        };
+            students = await Db.Students
+                .Where(s => s.SchoolId == user.SchoolId)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        else
+        {
+            // Admins or unscoped users see all
+            students = await Db.Students.AsNoTracking().ToListAsync();
+        }
     }
 
     private void ExportReport()
     {
-        // En este paso solo mostramos un mensaje o placeholder
+        // Placeholder for Excel or PDF export later
         Console.WriteLine("Export report clicked (feature coming soon)");
     }
 }

@@ -1,3 +1,5 @@
+namespace VaxSync.Web.Models;
+
 public class AuditLog
 {
     public int Id { get; set; }

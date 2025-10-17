@@ -1,9 +1,11 @@
 @page "/student-lookup"
 @using MudBlazor
+@using Microsoft.EntityFrameworkCore
 @using VaxSync.Web.Models
 @using VaxSync.Web.Data
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
+
 @inject ApplicationDbContext Db
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthState
@@ -12,81 +14,90 @@
 <PageTitle>Student Lookup</PageTitle>
 
 <MudPaper Class="p-4 mb-4">
-  <MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-      <MudTextField @bind-Value="SearchText"
-                    Label="School ID or SSN"
-                    Adornment="Adornment.Start"
-                    AdornmentIcon="@Icons.Material.Filled.Search"
-                    Immediate="true"
-                    DebounceInterval="300" />
-    </MudItem>
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField @bind-Value="SearchText"
+                          Label="Student ID, Name, or School Code"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          DebounceInterval="300" />
+        </MudItem>
+
         <MudItem xs="12" sm="6" md="3">
             <MudSelect T="string" @bind-Value="StatusFilter" Label="Status">
-                <MudSelectItem Value="@StatusAll">All</MudSelectItem>
-                <MudSelectItem Value="@StatusCompliant">Compliant</MudSelectItem>
-                <MudSelectItem Value="@StatusPending">Pending</MudSelectItem>
-                <MudSelectItem Value="@StatusNotCompliant">Not Compliant</MudSelectItem>
+                <MudSelectItem T="string" Value="@StatusAll">All</MudSelectItem>
+                <MudSelectItem T="string" Value="@StatusCompliant">Compliant</MudSelectItem>
+                <MudSelectItem T="string" Value="@StatusNotCompliant">Not Compliant</MudSelectItem>
             </MudSelect>
         </MudItem>
-    <MudItem xs="12" sm="12" md="5" Class="d-flex align-end">
-      <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Search">Search</MudButton>
-      <MudButton Class="ml-2" Variant="Variant.Outlined" OnClick="Clear">Clear</MudButton>
-    </MudItem>
-  </MudGrid>
+
+        <MudItem xs="12" sm="12" md="5" Class="d-flex align-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Search">Search</MudButton>
+            <MudButton Class="ml-2" Variant="Variant.Outlined" OnClick="Clear">Clear</MudButton>
+        </MudItem>
+    </MudGrid>
 </MudPaper>
 
 @if (!Searched)
 {
-  <MudAlert Severity="Severity.Info" Elevation="0">Enter an ID or SSN and click Search.</MudAlert>
+    <MudAlert Severity="Severity.Info" Elevation="0">
+        Enter a Student ID, a name, or a School Code (e.g., S-0001), then click Search.
+    </MudAlert>
 }
 else if (Students.Count == 0)
 {
-  <MudPaper Class="p-6">No students found.</MudPaper>
+    <MudPaper Class="p-6">No students found.</MudPaper>
 }
 else
 {
-  <MudTable Items="Students" Dense="true" Hover="true" RowsPerPage="25" Bordered="true" Breakpoint="Breakpoint.Sm">
-    <HeaderContent>
-      <MudTh>Full Name</MudTh>
-      <MudTh>DOB</MudTh>
-      <MudTh>School ID</MudTh>
-      <MudTh>Status</MudTh>
-      <MudTh>Actions</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-      <MudTd DataLabel="Full Name">@context.FullName</MudTd>
-      <MudTd DataLabel="DOB">@context.DateOfBirth</MudTd> @* string in your model *@
-      <MudTd DataLabel="School ID">@context.SchoolId</MudTd>
-      <MudTd DataLabel="Status">
-        @if (context.IsCompliant)
-        {
-          <MudChip T="string" Color="Color.Success" StartIcon="@Icons.Material.Filled.CheckCircle" Size="Size.Small">Compliant</MudChip>
-        }
-        else if (context.VaccineRecords.Any(v => v.Status == "Pending"))
-        {
-          <MudChip T="string" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Schedule" Size="Size.Small">Pending</MudChip>
-        }
-        else
-        {
-          <MudChip T="string" Color="Color.Error" StartIcon="@Icons.Material.Filled.Error" Size="Size.Small">Not Compliant</MudChip>
-        }
-      </MudTd>
-      <MudTd DataLabel="Actions">
-        <MudButton Size="Size.Small" Variant="Variant.Outlined"
-                   StartIcon="@Icons.Material.Filled.Visibility"
-                   OnClick="@(() => Nav.NavigateTo($"/student-details/{context.Id}"))">
-          View
-        </MudButton>
-      </MudTd>
-    </RowTemplate>
-  </MudTable>
+    <MudTable Items="Students" Dense="true" Hover="true" RowsPerPage="25" Bordered="true" Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>Full Name</MudTh>
+            <MudTh>DOB</MudTh>
+            <MudTh>School</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh class="text-right">Actions</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="Full Name">@($"{context.FirstName} {context.LastName}")</MudTd>
+            <MudTd DataLabel="DOB">@context.DateOfBirth.ToString("yyyy-MM-dd")</MudTd>
+            <MudTd DataLabel="School">@context.School?.Code</MudTd>
+            <MudTd DataLabel="Status">
+                @if (context.IsCompliant)
+                {
+                    <MudChip T="string" Color="Color.Success" StartIcon="@Icons.Material.Filled.CheckCircle" Size="Size.Small">
+                        Compliant
+                    </MudChip>
+                }
+                else
+                {
+                    <MudChip T="string" Color="Color.Error" StartIcon="@Icons.Material.Filled.Error" Size="Size.Small">
+                        Not Compliant
+                    </MudChip>
+                }
+            </MudTd>
+            <MudTd DataLabel="Actions" Class="text-right">
+                <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Visibility"
+                           OnClick="@(() => Nav.NavigateTo($"/student-details/{context.Id}"))">
+                    View
+                </MudButton>
+
+                <MudButton Class="ml-2" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Download"
+                           Href="@($"/student-report/{context.Id}")">
+                    PDF
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
 }
 
 @code {
     private const string StatusAll = "";
     private const string StatusCompliant = "Compliant";
-    private const string StatusPending = "Pending";
     private const string StatusNotCompliant = "Not Compliant";
 
     string SearchText = "";
@@ -103,34 +114,40 @@ else
         SchoolId = user?.SchoolId;
     }
 
-    void Search()
+    async Task Search()
     {
         Searched = true;
+
         if (string.IsNullOrWhiteSpace(SchoolId))
         {
             Students.Clear();
             return;
         }
 
-        var q = Db.Students.Where(s => s.SchoolId == SchoolId);
+        // Base query scoped to the user's school
+        var q = Db.Students
+                  .AsNoTracking()
+                  .Include(s => s.School) // to show School.Code
+                  .Where(s => s.SchoolId == SchoolId);
 
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
             var t = SearchText.Trim();
+
             q = q.Where(s =>
-                 s.SchoolId.Equals(t, StringComparison.OrdinalIgnoreCase)
-              || s.SSN.Equals(t, StringComparison.OrdinalIgnoreCase)
-              || s.FullName.Contains(t, StringComparison.OrdinalIgnoreCase));
+                 s.Id == t // direct student id
+                 || s.FirstName.Contains(t) || s.LastName.Contains(t) // name
+                 || (s.School != null && s.School.Code.Contains(t))   // school code like "S-0001"
+            );
         }
 
-        var list = q.ToList();
+        var list = await q.ToListAsync();
 
         if (!string.IsNullOrEmpty(StatusFilter))
         {
             list = list.Where(s =>
-                StatusFilter == "Compliant" && s.IsCompliant
-             || StatusFilter == "Pending" && !s.IsCompliant && s.VaccineRecords.Any(v => v.Status == "Pending")
-             || StatusFilter == "Not Compliant" && !s.IsCompliant && !s.VaccineRecords.Any(v => v.Status == "Pending")
+                  (StatusFilter == StatusCompliant     && s.IsCompliant)
+               || (StatusFilter == StatusNotCompliant && !s.IsCompliant)
             ).ToList();
         }
 
@@ -144,4 +161,3 @@ else
         Students.Clear();
     }
 }
-

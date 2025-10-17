@@ -1,94 +1,24 @@
-@page "/student-report"
-@using MudBlazor
-@using VaxSync.Web.Models
+@page "/student-report/{id}"
+@using VaxSync.Web.Services
+@inject StudentReportService Reports
 @inject IJSRuntime JS
 
 <PageTitle>Student Report</PageTitle>
 
-<MudPaper Class="p-4">
-    <MudText Typo="Typo.h5" Class="mb-2">Student Report Generator</MudText>
-
-    <MudGrid Class="mb-3">
-        <MudItem xs="12" sm="8" md="6">
-            <MudTextField @bind-Value="searchTerm"
-                          Label="Student ID or SSN"
-                          Adornment="Adornment.Start"
-                          AdornmentIcon="@Icons.Material.Filled.Search"
-                          Immediate="true"
-                          DebounceInterval="250" />
-        </MudItem>
-        <MudItem xs="12" sm="4" md="6" Class="d-flex align-end">
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.Download"
-                       OnClick="GenerateReport">
-                Download TXT Report
-            </MudButton>
-        </MudItem>
-    </MudGrid>
-
-    @if (notFound)
-    {
-        <MudAlert Severity="Severity.Warning" Elevation="0">No student found for that ID or SSN.</MudAlert>
-    }
-    @if (generated)
-    {
-        <MudAlert Severity="Severity.Success" Elevation="0">Report generated. Check your downloads.</MudAlert>
-    }
-</MudPaper>
+<MudContainer Class="py-6" MaxWidth="MaxWidth.Small">
+    <MudText Typo="Typo.h5" Class="mb-4">Generating report…</MudText>
+    <MudProgressCircular Indeterminate="true" />
+</MudContainer>
 
 @code {
-    string searchTerm = "";
-    bool generated = false;
-    bool notFound = false;
+    [Parameter] public string Id { get; set; } = "";
 
-    List<Student> students = new()
-  {
-    new Student
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-      Id = 1,
-      FullName = "Ana Rivera",
-      SchoolId = "S123",
-      SSN = "123-45-6789",
-      DateOfBirth = "2010-01-01",
-      Gender = "F",
-      IsCompliant = true,
-      VaccineRecords = new()
-      {
-        new VaccineRecord { VaccineName = "MMR", Date = "2021-08-01", Status = "Compliant" },
-        new VaccineRecord { VaccineName = "DTaP", Date = "2023-04-15", Status = "Pending" }
-      }
-    }
-  };
+        if (!firstRender) return;
 
-    async Task GenerateReport()
-    {
-        generated = false;
-        notFound = false;
-
-        var s = students.FirstOrDefault(x =>
-                  x.SSN.Equals(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                  x.SchoolId.Equals(searchTerm, StringComparison.OrdinalIgnoreCase));
-
-        if (s is null)
-        {
-            notFound = true;
-            return;
-        }
-
-        var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"Student Report for {s.FullName}");
-        sb.AppendLine($"School ID: {s.SchoolId}");
-        sb.AppendLine($"Date of Birth: {s.DateOfBirth}");
-        sb.AppendLine($"Gender: {s.Gender}");
-        sb.AppendLine();
-        sb.AppendLine("Vaccination Records:");
-        foreach (var v in s.VaccineRecords)
-            sb.AppendLine($"- {v.VaccineName} ({v.Date}): {v.Status}");
-
-        var base64 = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(sb.ToString()));
-        await JS.InvokeVoidAsync("downloadFile", $"StudentReport_{s.SchoolId}.txt", base64);
-
-        generated = true;
+        var bytes = await Reports.GenerateAsync(Id);
+        var base64 = Convert.ToBase64String(bytes);
+        await JS.InvokeVoidAsync("downloadFileAs", $"StudentReport_{Id}.pdf", "application/pdf", base64);
     }
 }
