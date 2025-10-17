@@ -1,6 +1,17 @@
+
 @using Microsoft.AspNetCore.Components.Web
 
 <RazorComponentsApp>
     <HeadOutlet @rendermode="RenderMode.Static" />
     <Routes @rendermode="RenderMode.InteractiveServer" />
+=======
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Web
+
+<RazorComponentsApp>
+    <HeadOutlet @rendermode="HeadRenderMode.Static" />
+
+    <CascadingAuthenticationState>
+        <Routes @rendermode="RenderMode.InteractiveServer" />
+    </CascadingAuthenticationState>
 </RazorComponentsApp>
