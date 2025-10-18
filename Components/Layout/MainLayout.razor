@@ -1,38 +1,78 @@
-﻿@inherits LayoutComponentBase
-@using Microsoft.AspNetCore.Components
+﻿@* Components/Layout/MainLayout.razor *@
+@inherits LayoutComponentBase
 @using MudBlazor
-@using VaxSync.Web.Components.Layout
+@using Microsoft.AspNetCore.Components.Authorization
 
-<MudThemeProvider Theme="@AppTheme.Theme" />
-<MudDialogProvider />
-<MudSnackbarProvider />
-<MudPopoverProvider />
+@if (!_isInteractive)
+{
+    <!-- SSR-safe shell -->
+    <div class="page">
+        <aside class="sidebar">
+            <nav class="px-3 py-2">
+                <a href="/">Home</a><br />
+                <a href="/student-lookup">Student Lookup</a><br />
+                <a href="/Account/Login">Login</a>
+            </nav>
+        </aside>
+        <main>
+            <div class="top-row px-4"><a href="/Account/Login">Login</a></div>
+            <article class="content px-4">@Body</article>
+        </main>
+    </div>
+}
+else
+{
+    <!-- Full MudBlazor layout -->
+    <MudThemeProvider Theme="@AppTheme.Theme">
+        <MudPopoverProvider />
+        <MudDialogProvider />
+        <MudSnackbarProvider />
+        <CascadingAuthenticationState>
+            <MudLayout>
+                <MudAppBar Elevation="4" Class="vx-appbar">
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                                   Color="Color.Inherit" Edge="Edge.Start"
+                                   OnClick="@ToggleDrawer" />
+                    <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
+                    <MudSpacer />
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudText Class="mr-4 text-white">
+                                Hello, @context.User.Identity?.Name
+                            </MudText>
+                        </Authorized>
+                    </AuthorizeView>
+                </MudAppBar>
 
-<MudLayout>
-    <MudAppBar Elevation="4" Class="vx-appbar">
-        <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
-        <MudSpacer />
-        <AuthorizeView>
-            <Authorized>
-                <MudText Class="mr-4 text-white">Hello, @context.User.Identity?.Name</MudText>
-            </Authorized>
-        </AuthorizeView>
-    </MudAppBar>
+                <MudDrawer @bind-Open="_drawerOpen" Elevation="1"
+                           ClipMode="DrawerClipMode.Always"
+                           Variant="DrawerVariant.Responsive">
+                    <NavMenu />
+                </MudDrawer>
 
-    <MudDrawer @bind-Open="_open" Elevation="1"
-               ClipMode="DrawerClipMode.Always"
-               Variant="DrawerVariant.Responsive">
-        <NavMenu />
-    </MudDrawer>
-
-    <MudMainContent Class="p-6">
-        <MudContainer MaxWidth="MaxWidth.False">
-            @Body   @* layout content placeholder *@
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+                <MudMainContent Class="p-6">
+                    <MudContainer MaxWidth="MaxWidth.False">
+                        @Body
+                    </MudContainer>
+                </MudMainContent>
+            </MudLayout>
+        </CascadingAuthenticationState>
+    </MudThemeProvider>
+}
 
 @code {
-    bool _open = true;
-    void ToggleDrawer() => _open = !_open;
+    private bool _isInteractive;
+    private bool _drawerOpen = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isInteractive = true;
+            StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
 }

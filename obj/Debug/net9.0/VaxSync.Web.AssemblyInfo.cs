@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VaxSync.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd50d1f8f43c0780d25c13ff3bee4a6cacf28f8a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8ac204c5dbeffb8dd5f588ebd3ccceb14020297")]
 [assembly: System.Reflection.AssemblyProductAttribute("VaxSync.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VaxSync.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

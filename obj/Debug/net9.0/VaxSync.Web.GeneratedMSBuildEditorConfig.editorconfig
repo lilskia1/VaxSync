@@ -18,8 +18,6 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
-build_property.TargetFrameworkIdentifier = .NETCoreApp
-build_property.TargetFrameworkVersion = v9.0
 build_property.RootNamespace = VaxSync.Web
 build_property.RootNamespace = VaxSync.Web
 build_property.ProjectDir = C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\
@@ -243,10 +241,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/DMT_3/source/repos/d4nnywoods/VaxSync/Components/Pages/ViewerDashboard.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xWaWV3ZXJEYXNoYm9hcmQucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/DMT_3/source/repos/d4nnywoods/VaxSync/Components/Routes.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/DMT_3/source/repos/d4nnywoods/VaxSync/Components/_Imports.razor]

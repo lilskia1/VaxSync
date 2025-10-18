@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using VaxSync.Web;
-using VaxSync.Web.Components.Account;
 using VaxSync.Web.Components;
+using VaxSync.Web.Components.Account;
 using VaxSync.Web.Data;
 using VaxSync.Web.Services;
+
+#nullable enable
 
 internal class Program
 {
@@ -14,30 +17,30 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // ---- UI / Blazor ----
+        // ---- Blazor (.NET 9) ----
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
-        // ---- Database ----
+        // ---- Database (SQLite in App_Data) ----
         var csFolder = Path.Combine(builder.Environment.ContentRootPath, "App_Data");
-        Directory.CreateDirectory(csFolder); // ensures folder exists even on new branches
+        Directory.CreateDirectory(csFolder);
         var dbPath = Path.Combine(csFolder, "vaxsync_dev.db");
 
         builder.Services.AddDbContext<ApplicationDbContext>(o =>
             o.UseSqlite($"Data Source={dbPath}"));
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-        // ---- AuthN / AuthZ for Blazor Identity components ----
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = IdentityConstants.ApplicationScheme;
-            options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-        })
-        .AddIdentityCookies();
+        // ---- Identity / Auth ----
+        builder.Services
+            .AddAuthentication(options =>
+            {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddIdentityCookies();
 
         builder.Services.AddAuthorization();
 
-        // ---- Identity stores ----
         builder.Services
             .AddIdentityCore<ApplicationUser>(o =>
             {
@@ -48,7 +51,6 @@ internal class Program
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
-        // Cookie paths aligned with component endpoints
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Account/Login";
@@ -58,7 +60,7 @@ internal class Program
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         });
 
-        // ---- Blazor auth state helpers ----
+        // Blazor auth helpers for AuthorizeView etc.
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<IdentityUserAccessor>();
         builder.Services.AddScoped<IdentityRedirectManager>();
@@ -71,26 +73,23 @@ internal class Program
 
         var app = builder.Build();
 
-        // ---- Dev DB migrate + synthetic seed (idempotent) ----
+        // ---- Dev: migrate + optional seed ----
         if (app.Environment.IsDevelopment())
         {
             using var scope = app.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            // Apply EF migrations first
             await db.Database.MigrateAsync();
 
-            // Optional toggle in appsettings.Development.json:
-            // "Seed": { "Enabled": true }
+            // Toggle via appsettings.Development.json
             var seedEnabled = app.Configuration.GetValue<bool?>("Seed:Enabled") ?? true;
             if (seedEnabled)
             {
-                // Seeds ~860 schools and ~241k students with plausible vaccine histories.
-                await DevSeeder.SeedAsync(db, targetStudentCount: 241_000, schoolCount: 860);
+                await DevSeeder.SeedAsync(db, targetStudentCount: 10000, schoolCount: 100);
             }
         }
 
-        // ---- One-time Identity user creation (after DB is ready) ----
+        // ---- One-time Identity user creation ----
         if (app.Configuration.GetValue<bool>("OneTimeCreateUsers"))
         {
             using var scope = app.Services.CreateScope();
@@ -144,9 +143,9 @@ internal class Program
         app.MapRazorComponents<App>()
            .AddInteractiveServerRenderMode();
 
+        // Required for Blazor Identity default pages at /Account/*
         app.MapAdditionalIdentityEndpoints();
 
-
-        app.Run();
+        await app.RunAsync();
     }
 }

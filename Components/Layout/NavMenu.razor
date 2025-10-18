@@ -1,80 +1,86 @@
-﻿@using MudBlazor
+﻿@* Components/Layout/MainLayout.razor *@
+@inherits LayoutComponentBase
+@using MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
 
-@code {
-    private const bool AlertsEnabled = true;
+@if (!_isInteractive)
+{
+    <!-- SSR-safe shell: no Mud components, no AuthorizeView -->
+    <div class="page">
+        <aside class="sidebar">
+            <nav class="px-3 py-2">
+                <a href="/">Home</a><br />
+                <a href="/student-lookup">Student Lookup</a><br />
+                <a href="/Account/Login">Login</a>
+            </nav>
+        </aside>
+
+        <main>
+            <div class="top-row px-4">
+                <a href="/Account/Login">Login</a>
+            </div>
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
+}
+else
+{
+    <!-- Full Mud layout after interactivity -->
+    <MudThemeProvider Theme="@AppTheme.Theme">
+        <MudPopoverProvider />
+        <MudDialogProvider />
+        <MudSnackbarProvider />
+
+        <!-- Provide auth context so NavMenu's AuthorizeView works -->
+        <CascadingAuthenticationState>
+            <MudLayout>
+                <MudAppBar Elevation="4" Class="vx-appbar">
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                                   Color="Color.Inherit" Edge="Edge.Start"
+                                   OnClick="@ToggleDrawer" />
+                    <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
+                    <MudSpacer />
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudText Class="mr-4 text-white">
+                                Hello, @context.User.Identity?.Name
+                            </MudText>
+                        </Authorized>
+                    </AuthorizeView>
+                </MudAppBar>
+
+                <MudDrawer @bind-Open="_drawerOpen" Elevation="1"
+                           ClipMode="DrawerClipMode.Always"
+                           Variant="DrawerVariant.Responsive">
+                    <!-- Your Mud-based menu goes here -->
+                    <NavMenu />
+                </MudDrawer>
+
+                <MudMainContent Class="p-6">
+                    <MudContainer MaxWidth="MaxWidth.False">
+                        @Body
+                    </MudContainer>
+                </MudMainContent>
+            </MudLayout>
+        </CascadingAuthenticationState>
+    </MudThemeProvider>
 }
 
-<MudNavMenu Dense="true">
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-        Home
-    </MudNavLink>
+@code {
+    private bool _isInteractive;
+    private bool _drawerOpen = true;
 
-    <!-- Admin -->
-    <AuthorizeView Roles="Admin">
-        <MudDivider Class="my-2" />
-        <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
-            Admin dashboard
-        </MudNavLink>
-        <MudNavLink Href="/school-report" Icon="@Icons.Material.Filled.Assessment">
-            School report
-        </MudNavLink>
-        @if (AlertsEnabled)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">
-                Alerts
-            </MudNavLink>
+            _isInteractive = true;   // flip to interactive after first client render
+            StateHasChanged();       // re-render into full Mud layout
         }
-    </AuthorizeView>
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
-    <!-- School Nurse -->
-    <AuthorizeView Roles="SchoolNurse">
-        <MudDivider Class="my-2" />
-        <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
-            Nurse dashboard
-        </MudNavLink>
-        <MudNavLink Href="/school-report" Icon="@Icons.Material.Filled.Assessment">
-            School report
-        </MudNavLink>
-        @if (AlertsEnabled)
-        {
-            <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">
-                Alerts
-            </MudNavLink>
-        }
-    </AuthorizeView>
-
-    <!-- Viewer (read-only) -->
-    <AuthorizeView Roles="Viewer">
-        <MudDivider Class="my-2" />
-        <MudNavLink Href="/viewer-dashboard" Icon="@Icons.Material.Filled.Dashboard">
-            Dashboard
-        </MudNavLink>
-        <MudNavLink Href="/school-report" Icon="@Icons.Material.Filled.Assessment">
-            School report
-        </MudNavLink>
-        @if (AlertsEnabled)
-        {
-            <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Warning">
-                Alerts
-            </MudNavLink>
-        }
-    </AuthorizeView>
-
-    <MudDivider Class="my-2" />
-
-    <!-- Auth links -->
-    <AuthorizeView>
-        <Authorized>
-            <MudNavLink Href="/Account/Manage" Icon="@Icons.Material.Filled.AccountCircle">Profile</MudNavLink>
-            <MudNavLink Href="/Account/Logout" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
-        </Authorized>
-        <NotAuthorized>
-            <MudNavLink Href="/Account/Register" Icon="@Icons.Material.Filled.PersonAdd">Register</MudNavLink>
-            <MudNavLink Href="/Account/Login" Icon="@Icons.Material.Filled.Login">Login</MudNavLink>
-        </NotAuthorized>
-    </AuthorizeView>
-
-    <MudDivider Class="my-2" />
-    <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">About</MudNavLink>
-</MudNavMenu>
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+}
