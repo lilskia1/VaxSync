@@ -26,32 +26,29 @@ else
         </MudNavLink>
 
         <AuthorizeView>
-            <Authorized>
+            <Authorized Context="authState">
                 <MudNavGroup Icon="@Icons.Material.Filled.Dashboard" Text="Dashboards" Expanded="true">
                     <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.DashboardCustomize">
                         My Dashboard
                     </MudNavLink>
-                    <AuthorizeView Roles="Admin">
-                        <Authorized>
-                            <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
-                                Admin Dashboard
-                            </MudNavLink>
-                        </Authorized>
-                    </AuthorizeView>
-                    <AuthorizeView Roles="SchoolNurse">
-                        <Authorized>
-                            <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
-                                Nurse Dashboard
-                            </MudNavLink>
-                        </Authorized>
-                    </AuthorizeView>
-                    <AuthorizeView Roles="Viewer">
-                        <Authorized>
-                            <MudNavLink Href="/viewer-dashboard" Icon="@Icons.Material.Filled.Visibility">
-                                Viewer Dashboard
-                            </MudNavLink>
-                        </Authorized>
-                    </AuthorizeView>
+                    @if (authState.User.IsInRole("Admin"))
+                    {
+                        <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
+                            Admin Dashboard
+                        </MudNavLink>
+                    }
+                    @if (authState.User.IsInRole("SchoolNurse"))
+                    {
+                        <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
+                            Nurse Dashboard
+                        </MudNavLink>
+                    }
+                    @if (authState.User.IsInRole("Viewer"))
+                    {
+                        <MudNavLink Href="/viewer-dashboard" Icon="@Icons.Material.Filled.Visibility">
+                            Viewer Dashboard
+                        </MudNavLink>
+                    }
                 </MudNavGroup>
 
                 <MudNavLink Href="/Account/Logout" Icon="@Icons.Material.Filled.Logout">
