@@ -1,29 +1,26 @@
 /* --- Global layout adjustments --- */
-.app-main,
-.login-shell {
-    display: flex;
-    width: 100%;
-    max-width: 640px;
-    padding: 12rem 12rem 12rem 12rem; /* adds more inner space */
-    box-sizing: border-box;
-    border-radius: 12px;
-    border: 12px solid rgba(0, 0, 0, 0.08); /* soft outline */
-    background-color: #fff;
-    /*
-        display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 640px;
-    padding: 3rem 4rem;
-    align-items: center;*/
-    /*justify-content: flex-start;*/
-    /* keeps below topbar */
-    /*padding-top: 24px;
-    box-sizing: border-box;*/
+:root {
+    color-scheme: light;
 }
 
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+html,
+body {
+    margin: 0;
+    font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f3f4f6;
+    color: #1f2933;
+}
+
+.login-shell {
+    min-height: calc(100vh - 4.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(2.5rem, 5vw, 5rem) clamp(1.5rem, 6vw, 4.5rem);
+    box-sizing: border-box;
+    background: radial-gradient(circle at 12% 18%, rgba(27, 161, 226, 0.32) 0%, rgba(11, 61, 145, 0.55) 32%, rgba(243, 244, 246, 1) 85%);
 }
 
 a, .btn-link {
@@ -81,12 +78,6 @@ h1:focus {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
-}
-
-html, body {
-    font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 /* a11y utility for screen readers */

@@ -35,7 +35,9 @@
 }
 
 .app-main ::deep .mud-container {
-    padding: 0;
+    width: min(100%, 1200px);
+    margin-inline: auto;
+    padding: 0 clamp(1rem, 3vw, 2rem);
 }
 
 .vx-drawer ::deep .mud-navmenu {
