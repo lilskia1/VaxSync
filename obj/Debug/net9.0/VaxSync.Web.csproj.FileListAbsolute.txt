@@ -637,7 +637,6 @@ C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\a3ygk
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\nezrqnk58p-muycvpuwrr.gz
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\v0zgfp0y55-87fc7y1x7t.gz
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\yfc7ypekbg-mlv21k5csn.gz
-C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\l754y5zyqo-w6hjlgx2zg.gz
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\vigy4p29iz-t1cqhe9u97.gz
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\ckeav53c5m-c2jlpeoesf.gz
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\520f5m66wr-sejl45xvog.gz
@@ -695,3 +694,4 @@ C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\refint\VaxSync.W
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\VaxSync.Web.pdb
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\VaxSync.Web.genruntimeconfig.cache
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\ref\VaxSync.Web.dll
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\l754y5zyqo-10ho7qm1vk.gz

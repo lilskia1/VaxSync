@@ -2,77 +2,46 @@
 @inherits LayoutComponentBase
 @using MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
+@using VaxSync.Web.Components.Layout
 
-@if (!_isInteractive)
-{
-    <!-- SSR-safe shell -->
-    <div class="page">
-        <aside class="sidebar">
-            <nav class="px-3 py-2">
-                <a href="/">Home</a><br />
-                <a href="/student-lookup">Student Lookup</a><br />
-                <a href="/Account/Login">Login</a>
-            </nav>
-        </aside>
-        <main>
-            <div class="top-row px-4"><a href="/Account/Login">Login</a></div>
-            <article class="content px-4">@Body</article>
-        </main>
-    </div>
-}
-else
-{
-    <!-- Full MudBlazor layout -->
-    <MudThemeProvider Theme="@AppTheme.Theme">
-        <MudPopoverProvider />
-        <MudDialogProvider />
-        <MudSnackbarProvider />
-        <CascadingAuthenticationState>
-            <MudLayout>
-                <MudAppBar Elevation="4" Class="vx-appbar">
-                    <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                                   Color="Color.Inherit" Edge="Edge.Start"
-                                   OnClick="@ToggleDrawer" />
-                    <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
-                    <MudSpacer />
-                    <AuthorizeView>
-                        <Authorized>
-                            <MudText Class="mr-4 text-white">
-                                Hello, @context.User.Identity?.Name
-                            </MudText>
-                        </Authorized>
-                    </AuthorizeView>
-                </MudAppBar>
+<!-- Full MudBlazor shell -->
+<MudThemeProvider Theme="@AppTheme.Theme">
+    <MudPopoverProvider />
+    <MudDialogProvider />
+    <MudSnackbarProvider />
+        <MudLayout>
 
-                <MudDrawer @bind-Open="_drawerOpen" Elevation="1"
-                           ClipMode="DrawerClipMode.Always"
-                           Variant="DrawerVariant.Responsive">
-                    <NavMenu />
-                </MudDrawer>
+            <!-- Top bar -->
+            <MudAppBar Elevation="4" Class="vx-appbar">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                               Color="Color.Inherit"
+                               Edge="Edge.Start"
+                               Disabled="true" />
+                <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
+                <MudSpacer />
+                <AuthorizeView>
+                    <Authorized>
+                        <MudText Class="mr-4 text-white">
+                            Hello, @context.User.Identity?.Name
+                        </MudText>
+                    </Authorized>
+                </AuthorizeView>
+            </MudAppBar>
 
-                <MudMainContent Class="p-6">
-                    <MudContainer MaxWidth="MaxWidth.False">
-                        @Body
-                    </MudContainer>
-                </MudMainContent>
-            </MudLayout>
-        </CascadingAuthenticationState>
-    </MudThemeProvider>
-}
+            <!-- Sidebar -->
+            <MudDrawer Open="true"
+                       Elevation="1"
+                       ClipMode="DrawerClipMode.Always"
+                       Variant="DrawerVariant.Responsive">
+                <NavMenu />
+            </MudDrawer>
 
-@code {
-    private bool _isInteractive;
-    private bool _drawerOpen = true;
+            <!-- Main content -->
+            <MudMainContent Class="p-6">
+                <MudContainer MaxWidth="MaxWidth.False">
+                    @Body
+                </MudContainer>
+            </MudMainContent>
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _isInteractive = true;
-            StateHasChanged();
-        }
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
-}
+        </MudLayout>
+</MudThemeProvider>

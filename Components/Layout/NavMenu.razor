@@ -1,18 +1,7 @@
 @* Components/Layout/NavMenu.razor *@
-@using MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
 
-@if (!_isInteractive)
-{
-    <nav class="vx-nav-fallback">
-        <a class="vx-nav-link" href="/">Home</a>
-        <a class="vx-nav-link" href="/about">About</a>
-        <a class="vx-nav-link" href="/student-lookup">Student Lookup</a>
-        <a class="vx-nav-link" href="/dashboard">Dashboard</a>
-        <a class="vx-nav-link" href="/Account/Login">Sign in</a>
-    </nav>
-}
-else
+
 {
     <MudNavMenu Dense="true">
         <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
@@ -66,19 +55,4 @@ else
             System Health
         </MudNavLink>
     </MudNavMenu>
-}
-
-@code {
-    private bool _isInteractive;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _isInteractive = true;
-            StateHasChanged();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
 }
