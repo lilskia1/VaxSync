@@ -109,19 +109,19 @@
         }
     }
 
-    private static string ResolveDashboardTarget(ClaimsPrincipal user)
+    private static string ResolveDashboardTarget(ClaimsPrincipal? user)
     {
-        if (user.IsInRole("Admin"))
+        if (user?.IsInRole("Admin") == true)
         {
             return "/admin-dashboard";
         }
 
-        if (user.IsInRole("SchoolNurse"))
+        if (user?.IsInRole("SchoolNurse") == true)
         {
             return "/nurse-dashboard";
         }
 
-        if (user.IsInRole("Viewer"))
+        if (user?.IsInRole("Viewer") == true)
         {
             return "/viewer-dashboard";
         }
