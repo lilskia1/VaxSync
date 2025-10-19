@@ -4,41 +4,35 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using VaxSync.Web.Components.Layout
 
-<MudPopoverProvider>
-    <MudDialogProvider>
-        <MudSnackbarProvider>
-            <MudLayout>
+<MudLayout>
 
-                <!-- Top bar -->
-                <MudAppBar Elevation="4" Class="vx-appbar">
-                    <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
-                    <MudSpacer />
-                    <AuthorizeView>
-                        <Authorized>
-                            <MudText Class="mr-4 text-white">
-                                Hello, @context.User.Identity?.Name
-                            </MudText>
-                        </Authorized>
-                    </AuthorizeView>
-                </MudAppBar>
+    <!-- Top bar -->
+    <MudAppBar Elevation="4" Class="vx-appbar">
+        <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
+        <MudSpacer />
+        <AuthorizeView>
+            <Authorized>
+                <MudText Class="mr-4 text-white">
+                    Hello, @context.User.Identity?.Name
+                </MudText>
+            </Authorized>
+        </AuthorizeView>
+    </MudAppBar>
 
-                <!-- Sidebar -->
-                <MudDrawer Open="true"
-                           Elevation="1"
-                           ClipMode="DrawerClipMode.Always"
-                           Variant="DrawerVariant.Responsive"
-                           Breakpoint="Breakpoint.Lg">
-                    <NavMenu />
-                </MudDrawer>
+    <!-- Sidebar -->
+    <MudDrawer Open="true"
+               Elevation="1"
+               ClipMode="DrawerClipMode.Always"
+               Variant="DrawerVariant.Responsive"
+               Breakpoint="Breakpoint.Lg">
+        <NavMenu />
+    </MudDrawer>
 
-                <!-- Main content -->
-                <MudMainContent Class="p-6">
-                    <MudContainer MaxWidth="MaxWidth.False">
-                        @Body
-                    </MudContainer>
-                </MudMainContent>
+    <!-- Main content -->
+    <MudMainContent Class="p-6">
+        <MudContainer MaxWidth="MaxWidth.False">
+            @Body
+        </MudContainer>
+    </MudMainContent>
 
-            </MudLayout>
-        </MudSnackbarProvider>
-    </MudDialogProvider>
-</MudPopoverProvider>
+</MudLayout>
