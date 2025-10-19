@@ -1,5 +1,6 @@
 ﻿@page "/Account/Login"
 
+@using System
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
@@ -111,7 +112,25 @@
             if (result.Succeeded)
             {
                 Logger.LogInformation("User logged in.");
-                RedirectManager.RedirectTo(ReturnUrl);
+
+                var destination = ReturnUrl;
+                if (!string.IsNullOrWhiteSpace(destination))
+                {
+                    var absoluteDestination = NavigationManager.ToAbsoluteUri(destination);
+                    var normalizedDestination = absoluteDestination.AbsoluteUri.TrimEnd('/');
+                    var normalizedBase = NavigationManager.BaseUri.TrimEnd('/');
+
+                    if (string.Equals(normalizedDestination, normalizedBase, StringComparison.OrdinalIgnoreCase))
+                    {
+                        destination = "dashboard";
+                    }
+                }
+                else
+                {
+                    destination = "dashboard";
+                }
+
+                RedirectManager.RedirectTo(destination);
             }
             else if (result.RequiresTwoFactor)
             {
