@@ -18,21 +18,33 @@
     </MudItem>
 
     <MudItem xs="12" sm="6" md="3">
-        <MudPaper Class="p-4">
+        <MudPaper Class="p-4 metric-card">
             <MudText Typo="Typo.overline" Class="mud-text-secondary">Students</MudText>
             <MudText Typo="Typo.h4">@Totals.Total</MudText>
         </MudPaper>
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
-        <MudPaper Class="p-4">
+        <MudPaper Class="p-4 metric-card">
             <MudText Typo="Typo.overline" Class="mud-text-secondary">Compliant</MudText>
             <MudText Typo="Typo.h4" Color="Color.Success">@Totals.Compliant</MudText>
         </MudPaper>
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
-        <MudPaper Class="p-4">
+        <MudPaper Class="p-4 metric-card">
             <MudText Typo="Typo.overline" Class="mud-text-secondary">Pending / Not</MudText>
             <MudText Typo="Typo.h4" Color="Color.Warning">@Totals.NonCompliant</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="p-4 h-100">
+            <MudText Typo="Typo.h6" Class="mb-2">Compliance snapshot</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary mb-4">Students assigned to your school.</MudText>
+            <MudChart ChartType="ChartType.Donut"
+                      Labels="@complianceLabels"
+                      ChartSeries="@complianceSeries"
+                      Options="@complianceOptions"
+                      Class="dashboard-chart" />
         </MudPaper>
     </MudItem>
 
@@ -52,6 +64,14 @@
     public record TotalsVm(int Total, int Compliant, int NonCompliant);
     TotalsVm Totals = new(0, 0, 0);
 
+    private readonly string[] complianceLabels = ["Compliant", "Pending / Not compliant"];
+    private ChartSeries[] complianceSeries = Array.Empty<ChartSeries>();
+    private readonly ChartOptions complianceOptions = new()
+    {
+        MaintainAspectRatio = false,
+        ChartPalette = new[] { "#16A34A", "#F59E0B" }
+    };
+
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthState.GetAuthenticationStateAsync();
@@ -66,5 +86,14 @@
         var total = students.Count;
         var compliant = students.Count(s => s.IsCompliant);
         Totals = new(total, compliant, total - compliant);
+
+        complianceSeries = new[]
+        {
+            new ChartSeries
+            {
+                Name = "Students",
+                Data = new double[] { Totals.Compliant, Totals.NonCompliant }
+            }
+        };
     }
 }
