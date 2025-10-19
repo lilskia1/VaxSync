@@ -43,8 +43,8 @@
                                   Variant="Variant.Outlined"
                                   InputType="InputType.Password" />
 
-                    <MudStack Direction="Row" AlignItems="Center" Justify="Space-Between" Class="mt-1">
-                        <MudCheckBox @bind-Checked="Input.RememberMe" Label="Remember me" />
+                    <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mt-1">
+                        <MudCheckBox @bind-Checked="Input.RememberMe" Label="Remember me" T="bool" />
                         <MudLink Href="/Account/ForgotPassword" Class="mud-typography-body2">Forgot password?</MudLink>
                     </MudStack>
 
@@ -57,7 +57,7 @@
                         Log in
                     </MudButton>
 
-                    <MudStack AlignItems="Center" Spacing="0.5" Class="mt-2">
+                    <MudStack AlignItems="AlignItems.Center" Spacing="1" Class="mt-2 link-stack">
                         <MudText Typo="Typo.body2" Class="mud-text-secondary">Don't have an account?</MudText>
                         <MudLink Href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))" Class="mud-typography-body2">
                             Register a new account

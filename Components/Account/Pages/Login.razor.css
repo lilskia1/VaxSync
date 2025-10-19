@@ -29,6 +29,10 @@
     color: #0b3d91;
 }
 
+.login-card ::deep .link-stack {
+    gap: 0.5rem;
+}
+
 @media (max-width: 600px) {
     .login-shell {
         min-height: calc(100vh - 4rem);
