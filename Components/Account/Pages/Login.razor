@@ -3,9 +3,8 @@
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
-@using MudBlazor
-@using VaxSync.Web.Components.Account
-@using VaxSync.Web.Data   @* <-- make sure this matches your real namespace (avoid Vax_Sync vs VaxSync mismatch) *@
+@using Microsoft.AspNetCore.Components.Authorization
+@using VaxSync.Web.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -15,81 +14,92 @@
 
 <PageTitle>Log in</PageTitle>
 
-<div class="login-shell">
-    <MudPaper Class="login-card" Elevation="6">
-        <MudStack Spacing="4">
-            <MudText Typo="Typo.h3" Class="fw-semibold">Welcome back</MudText>
-            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                Use your VaxSync account to access dashboards and tools.
-            </MudText>
-
+<div class="row">
+    <div class="col-lg-6">
+        <section>
             @if (!string.IsNullOrWhiteSpace(errorMessage))
             {
-                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@errorMessage</MudAlert>
+                <div class="alert alert-danger" role="alert">
+                    @errorMessage
+                </div>
             }
-
+            
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
                 <DataAnnotationsValidator />
-                <MudStack Spacing="4">
-                    <MudTextField @bind-Value="Input.Email"
-                                  For="@(() => Input.Email)"
-                                  Label="Email"
-                                  Placeholder="name@example.com"
-                                  Required="true"
-                                  Adornment="Adornment.Start"
-                                  AdornmentIcon="@Icons.Material.Filled.Email"
-                                  Variant="Variant.Outlined"
-                                  InputType="InputType.Email" />
-
-                    <MudTextField @bind-Value="Input.Password"
-                                  For="@(() => Input.Password)"
-                                  Label="Password"
-                                  Required="true"
-                                  Adornment="Adornment.Start"
-                                  AdornmentIcon="@Icons.Material.Filled.Lock"
-                                  Variant="Variant.Outlined"
-                                  InputType="InputType.Password" />
-
-                    <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                        <MudCheckBox @bind-Checked="Input.RememberMe" Label="Remember me" T="bool" />
-                        <MudLink Href="/Account/ForgotPassword" Class="mud-typography-body2">Forgot password?</MudLink>
-                    </MudStack>
-
-                    <MudButton Type="ButtonType.Submit"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               FullWidth="true">
-                        Log in
-                    </MudButton>
-
-                    <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="mt-2 link-stack">
-                        <MudText Typo="Typo.body1" Class="mud-text-secondary">Don’t have an account?</MudText>
-                        <MudLink Href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))"
-                                 Class="mud-typography-body2">
-                            Register a new account
-                        </MudLink>
-                        <MudLink Href="/Account/ResendEmailConfirmation" Class="mud-typography-body2">
-                            Resend confirmation email
-                        </MudLink>
-                    </MudStack>
-                </MudStack>
+                <h2>Use your VaxSync account to access dashboards and tools.</h2>
+                <hr />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Email" 
+                              id="Input.Email" 
+                              class="form-control" 
+                              autocomplete="username" 
+                              aria-required="true" 
+                              placeholder="name@example.com" />
+                    <label for="Input.Email" class="form-label">Email</label>
+                    <ValidationMessage For="() => Input.Email" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="password" 
+                              @bind-Value="Input.Password" 
+                              id="Input.Password" 
+                              class="form-control" 
+                              autocomplete="current-password" 
+                              aria-required="true" 
+                              placeholder="password" />
+                    <label for="Input.Password" class="form-label">Password</label>
+                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+                </div>
+                <div class="checkbox mb-3">
+                    <label class="form-label">
+                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
+                        Remember me
+                    </label>
+                </div>
+                <div>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">
+                        @if (isLoggingIn)
+                        {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span class="ms-2">Logging in...</span>
+                        }
+                        else
+                        {
+                            <span>Log in</span>
+                        }
+                    </button>
+                </div>
+                <div class="mt-3">
+                    <p>
+                        <a href="Account/ForgotPassword">Forgot your password?</a>
+                    </p>
+                    <p>
+                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
+                    </p>
+                    <p>
+                        <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
+                    </p>
+                </div>
             </EditForm>
-        </MudStack>
-    </MudPaper>
+        </section>
+    </div>
 </div>
 
 @code {
     private string? errorMessage;
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    private bool isLoggingIn;
 
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
 
-    // If you arrive here because a protected page redirected you, this will be populated.
-    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        // Optional: clears any external auth cookie so each login starts clean.
         if (HttpMethods.IsGet(HttpContext.Request.Method))
         {
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -98,59 +108,66 @@
 
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-        if (result.Succeeded)
+        try
         {
-            Logger.LogInformation("User logged in.");
-            var user = await UserManager.FindByEmailAsync(Input.Email);
-            if (user is null)
-            {
-                RedirectManager.RedirectTo("/");
-                return;
-            }
+            isLoggingIn = true;
+            StateHasChanged();
 
-            if (await UserManager.IsInRoleAsync(user, "Admin"))
+            var result = await SignInManager.PasswordSignInAsync(
+                Input.Email,
+                Input.Password,
+                Input.RememberMe,
+                lockoutOnFailure: false);
+
+            if (result.Succeeded)
             {
-                RedirectManager.RedirectTo("/admin-dashboard");
+                Logger.LogInformation("User logged in successfully.");
+                
+                // After successful login, navigate to root which will handle the role-based routing
+                NavigationManager.NavigateTo("/", new NavigationOptions
+                {
+                    ReplaceHistoryEntry = true,
+                    ForceLoad = true  // Force load to ensure fresh state
+                });
             }
-            else if (await UserManager.IsInRoleAsync(user, "SchoolNurse"))
+            else if (result.RequiresTwoFactor)
             {
-                RedirectManager.RedirectTo("/nurse-dashboard");
+                RedirectManager.RedirectTo(
+                    "Account/LoginWith2fa",
+                    new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
             }
-            else if (await UserManager.IsInRoleAsync(user, "Viewer"))
+            else if (result.IsLockedOut)
             {
-                RedirectManager.RedirectTo("/viewer-dashboard");
+                Logger.LogWarning("User account locked out.");
+                RedirectManager.RedirectTo("Account/Lockout");
             }
             else
             {
-                RedirectManager.RedirectTo("/");
+                errorMessage = "Invalid login attempt. Please check your email and password.";
+                StateHasChanged();
             }
         }
-        else if (result.RequiresTwoFactor)
+        catch (Exception ex)
         {
-            RedirectManager.RedirectTo(
-                "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+            Logger.LogError(ex, "Error during login attempt");
+            errorMessage = "An unexpected error occurred. Please try again.";
+            StateHasChanged();
         }
-        else if (result.IsLockedOut)
+        finally
         {
-            Logger.LogWarning("User account locked out.");
-            RedirectManager.RedirectTo("Account/Lockout");
-        }
-        else
-        {
-            errorMessage = "Error: Invalid login attempt.";
+            isLoggingIn = false;
+            StateHasChanged();
         }
     }
 
     private sealed class InputModel
     {
-        [Required, EmailAddress]
+        [Required]
+        [EmailAddress]
         public string Email { get; set; } = "";
 
-        [Required, DataType(DataType.Password)]
+        [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 
         [Display(Name = "Remember me?")]

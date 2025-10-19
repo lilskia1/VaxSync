@@ -30,13 +30,13 @@
     .vx-right {
         flex: 1;
         position: relative;
-        overflow: hidden; /* Add this to contain the image */
+        overflow: hidden;
     }
 
         .vx-right img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* This makes the image cover the entire container */
+            object-fit: cover;
             position: absolute;
             top: 0;
             left: 0;
@@ -62,20 +62,23 @@
     }
 </style>
 
-<div class="vx-split">
-    <section class="vx-left">
-        <img src="images/favicon.png" alt="VaxSync Logo" class="vx-logo" />
-        <MudText Typo="Typo.h3" Class="fw-bold">VaxSync student vaccine hub</MudText>
-        <MudText Typo="Typo.subtitle1" Class="opacity-75 mb-4">
-            Track compliance, view alerts, and export records with confidence.
-        </MudText>
-    </section>
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="vx-split">
+            <section class="vx-left">
+                <img src="images/favicon.png" alt="VaxSync Logo" class="vx-logo" />
+                <MudText Typo="Typo.h3" Class="fw-bold">VaxSync student vaccine hub</MudText>
+                <MudText Typo="Typo.subtitle1" Class="opacity-75 mb-4">
+                    Track compliance, view alerts, and export records with confidence.
+                </MudText>
+            </section>
 
-    <section class="vx-right">
-        <img src="images/nurse-student.jpeg" alt="Nurse with student" />
-    </section>
-</div>
-
+            <section class="vx-right">
+                <img src="images/nurse-student.jpeg" alt="Nurse with student" />
+            </section>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     protected override async Task OnInitializedAsync()
@@ -85,27 +88,25 @@
             var state = await AuthState.GetAuthenticationStateAsync();
             var authed = state.User?.Identity?.IsAuthenticated == true;
 
-            var target = authed ? ResolveDashboardTarget(state.User) : "/Account/Login";
-            var here = new Uri(Nav.Uri).AbsolutePath;
-
-            if (string.Equals(here, target, StringComparison.OrdinalIgnoreCase))
+            if (authed)
             {
-                return;
+                var target = ResolveDashboardTarget(state.User);
+                var here = new Uri(Nav.Uri).AbsolutePath;
+
+                if (!string.Equals(here, target, StringComparison.OrdinalIgnoreCase))
+                {
+                    Nav.NavigateTo(target, new NavigationOptions
+                    {
+                        ReplaceHistoryEntry = true,
+                        ForceLoad = true  // Changed to true to ensure proper state refresh
+                    });
+                }
             }
-
-            Nav.NavigateTo(target, new NavigationOptions
-            {
-                ReplaceHistoryEntry = true,
-                ForceLoad = false
-            });
         }
-        catch (Microsoft.AspNetCore.Components.NavigationException)
+        catch (Exception ex)
         {
-            // harmless during prerender; interactive pass will handle it
-        }
-        catch
-        {
-            // let the ErrorBoundary surface details, don’t kill first render
+            // Log the error but don't throw during initial render
+            Console.WriteLine($"Navigation error: {ex.Message}");
         }
     }
 
