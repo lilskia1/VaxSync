@@ -1,0 +1,9 @@
+.metric-card[b-rk4kicfgd1] {
+    border-radius: 1rem;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 246, 255, 0.96) 100%);
+    box-shadow: 0 12px 24px rgba(11, 61, 145, 0.08);
+}
+
+.dashboard-chart[b-rk4kicfgd1] {
+    min-height: 240px;
+}

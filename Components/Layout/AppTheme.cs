@@ -8,11 +8,11 @@ public static class AppTheme
     {
         PaletteLight = new PaletteLight
         {
-            Primary = "#0B3D91",
+            Primary = "#1BA1E2",
             PrimaryContrastText = "#FFFFFF",
-            Secondary = "#1BA1E2",
+            Secondary = "#0B3D91",
             SecondaryContrastText = "#0B3D91",
-            Info = "#1BA1E2",
+            Info = "#0B3D91",
             Success = "#16A34A",
             Warning = "#F59E0B",
             Error = "#DC2626",

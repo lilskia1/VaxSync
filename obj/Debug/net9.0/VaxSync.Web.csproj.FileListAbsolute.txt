@@ -681,8 +681,6 @@ C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\goxjm
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\6wjadcafi5-h1s4sie4z3.gz
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\ra9f1eljsb-4d85u1mtcx.gz
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\q6u35dfbb1-0j3bgjxly4.gz
-C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\nj00wfanz5-xwp41sy0et.gz
-C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\42sfa186x6-xwp41sy0et.gz
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\staticwebassets.development.json
@@ -695,3 +693,9 @@ C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\VaxSync.Web.pdb
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\VaxSync.Web.genruntimeconfig.cache
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\ref\VaxSync.Web.dll
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\l754y5zyqo-10ho7qm1vk.gz
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\scopedcss\Components\Account\Pages\Login.razor.rz.scp.css
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\scopedcss\Components\Pages\AdminDashboard.razor.rz.scp.css
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\scopedcss\Components\Pages\NurseDashboard.razor.rz.scp.css
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\scopedcss\Components\Pages\ViewerDashboard.razor.rz.scp.css
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\nj00wfanz5-p8vwdrqmyn.gz
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\42sfa186x6-p8vwdrqmyn.gz
