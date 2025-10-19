@@ -1,86 +1,84 @@
-﻿@* Components/Layout/MainLayout.razor *@
-@inherits LayoutComponentBase
+@* Components/Layout/NavMenu.razor *@
 @using MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
 
 @if (!_isInteractive)
 {
-    <!-- SSR-safe shell: no Mud components, no AuthorizeView -->
-    <div class="page">
-        <aside class="sidebar">
-            <nav class="px-3 py-2">
-                <a href="/">Home</a><br />
-                <a href="/student-lookup">Student Lookup</a><br />
-                <a href="/Account/Login">Login</a>
-            </nav>
-        </aside>
-
-        <main>
-            <div class="top-row px-4">
-                <a href="/Account/Login">Login</a>
-            </div>
-            <article class="content px-4">
-                @Body
-            </article>
-        </main>
-    </div>
+    <nav class="vx-nav-fallback">
+        <a class="vx-nav-link" href="/">Home</a>
+        <a class="vx-nav-link" href="/about">About</a>
+        <a class="vx-nav-link" href="/student-lookup">Student Lookup</a>
+        <a class="vx-nav-link" href="/dashboard">Dashboard</a>
+        <a class="vx-nav-link" href="/Account/Login">Sign in</a>
+    </nav>
 }
 else
 {
-    <!-- Full Mud layout after interactivity -->
-    <MudThemeProvider Theme="@AppTheme.Theme">
-        <MudPopoverProvider />
-        <MudDialogProvider />
-        <MudSnackbarProvider />
+    <MudNavMenu Dense="true">
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+            Home
+        </MudNavLink>
+        <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">
+            About
+        </MudNavLink>
+        <MudNavLink Href="/student-lookup" Icon="@Icons.Material.Filled.Search">
+            Student Lookup
+        </MudNavLink>
 
-        <!-- Provide auth context so NavMenu's AuthorizeView works -->
-        <CascadingAuthenticationState>
-            <MudLayout>
-                <MudAppBar Elevation="4" Class="vx-appbar">
-                    <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                                   Color="Color.Inherit" Edge="Edge.Start"
-                                   OnClick="@ToggleDrawer" />
-                    <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
-                    <MudSpacer />
-                    <AuthorizeView>
-                        <Authorized>
-                            <MudText Class="mr-4 text-white">
-                                Hello, @context.User.Identity?.Name
-                            </MudText>
-                        </Authorized>
-                    </AuthorizeView>
-                </MudAppBar>
+        <AuthorizeView>
+            <Authorized Context="authState">
+                <MudNavGroup Icon="@Icons.Material.Filled.Dashboard" Text="Dashboards" Expanded="true">
+                    <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.DashboardCustomize">
+                        My Dashboard
+                    </MudNavLink>
+                    @if (authState.User.IsInRole("Admin"))
+                    {
+                        <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
+                            Admin Dashboard
+                        </MudNavLink>
+                    }
+                    @if (authState.User.IsInRole("SchoolNurse"))
+                    {
+                        <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
+                            Nurse Dashboard
+                        </MudNavLink>
+                    }
+                    @if (authState.User.IsInRole("Viewer"))
+                    {
+                        <MudNavLink Href="/viewer-dashboard" Icon="@Icons.Material.Filled.Visibility">
+                            Viewer Dashboard
+                        </MudNavLink>
+                    }
+                </MudNavGroup>
 
-                <MudDrawer @bind-Open="_drawerOpen" Elevation="1"
-                           ClipMode="DrawerClipMode.Always"
-                           Variant="DrawerVariant.Responsive">
-                    <!-- Your Mud-based menu goes here -->
-                    <NavMenu />
-                </MudDrawer>
+                <MudNavLink Href="/Account/Logout" Icon="@Icons.Material.Filled.Logout">
+                    Sign out
+                </MudNavLink>
+            </Authorized>
+            <NotAuthorized>
+                <MudNavLink Href="/Account/Login" Icon="@Icons.Material.Filled.Login">
+                    Sign in
+                </MudNavLink>
+            </NotAuthorized>
+        </AuthorizeView>
 
-                <MudMainContent Class="p-6">
-                    <MudContainer MaxWidth="MaxWidth.False">
-                        @Body
-                    </MudContainer>
-                </MudMainContent>
-            </MudLayout>
-        </CascadingAuthenticationState>
-    </MudThemeProvider>
+        <MudNavLink Href="/ping" Icon="@Icons.Material.Filled.HealthAndSafety">
+            System Health
+        </MudNavLink>
+    </MudNavMenu>
 }
 
 @code {
     private bool _isInteractive;
-    private bool _drawerOpen = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _isInteractive = true;   // flip to interactive after first client render
-            StateHasChanged();       // re-render into full Mud layout
+            _isInteractive = true;
+            StateHasChanged();
         }
+
         await base.OnAfterRenderAsync(firstRender);
     }
-
-    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
 }
