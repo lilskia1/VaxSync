@@ -1,0 +1,47 @@
+.login-shell {
+    min-height: calc(100vh - 6rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(2rem, 4vw, 4rem) 1.5rem;
+    background: radial-gradient(circle at 10% 20%, rgba(27, 161, 226, 0.35) 0%, rgba(11, 61, 145, 0.55) 35%, rgba(243, 244, 246, 1) 85%);
+}
+
+.login-card {
+    width: min(100%, 420px);
+    border-radius: 1.25rem;
+    padding: clamp(2rem, 4vw, 2.75rem);
+    background-color: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 24px 60px rgba(7, 26, 64, 0.18);
+}
+
+.login-card ::deep .mud-input-root {
+    border-radius: 0.75rem;
+}
+
+.login-card ::deep .mud-button {
+    padding-block: 0.7rem;
+    font-weight: 600;
+}
+
+.login-card ::deep .mud-link {
+    color: #0b3d91;
+}
+
+.login-card ::deep .link-stack {
+    gap: 0.5rem;
+}
+
+@media (max-width: 600px) {
+    .login-shell {
+        min-height: calc(100vh - 4rem);
+        padding-inline: 1rem;
+    }
+
+    .login-card {
+        border-radius: 1rem;
+        padding: 1.75rem;
+        box-shadow: 0 16px 40px rgba(7, 26, 64, 0.18);
+    }
+}

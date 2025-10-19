@@ -1,9 +1,14 @@
-﻿@if (!string.IsNullOrEmpty(DisplayMessage))
+@using MudBlazor
+
+@if (!string.IsNullOrEmpty(DisplayMessage))
 {
-    var statusMessageClass = DisplayMessage.StartsWith("Error") ? "danger" : "success";
-    <div class="alert alert-@statusMessageClass" role="alert">
+    var severity = DisplayMessage.StartsWith("Error", StringComparison.OrdinalIgnoreCase)
+        ? Severity.Error
+        : Severity.Success;
+
+    <MudAlert Severity="@severity" Elevation="0" Variant="Variant.Outlined" Dense="true" Class="mb-2">
         @DisplayMessage
-    </div>
+    </MudAlert>
 }
 
 @code {

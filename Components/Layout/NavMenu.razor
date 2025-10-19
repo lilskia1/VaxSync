@@ -1,55 +1,81 @@
 @* Components/Layout/NavMenu.razor *@
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Identity
 
+<MudNavMenu Dense="true" Class="vx-nav-menu">
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+        Home
+    </MudNavLink>
+    <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">
+        About
+    </MudNavLink>
+    <MudNavLink Href="/student-lookup" Icon="@Icons.Material.Filled.Search">
+        Student Lookup
+    </MudNavLink>
 
-{
-    <MudNavMenu Dense="true">
-        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-            Home
-        </MudNavLink>
-        <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">
-            About
-        </MudNavLink>
-        <MudNavLink Href="/student-lookup" Icon="@Icons.Material.Filled.Search">
-            Student Lookup
-        </MudNavLink>
+    <MudDivider />
 
-        <AuthorizeView>
-            <Authorized Context="authState">
-                <MudNavGroup Icon="@Icons.Material.Filled.Dashboard" Text="Dashboards" Expanded="true">
-                    <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.DashboardCustomize">
-                        My Dashboard
+    <AuthorizeView Context="authState">
+        <Authorized>
+            <MudNavGroup Icon="@Icons.Material.Filled.Dashboard" Text="Dashboards" Expanded="true">
+                <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.SpaceDashboard">
+                    Overview
+                </MudNavLink>
+
+                @if (authState.User.IsInRole("Admin"))
+                {
+                    <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
+                        Admin Dashboard
                     </MudNavLink>
-                    @if (authState.User.IsInRole("Admin"))
-                    {
-                        <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
-                            Admin Dashboard
-                        </MudNavLink>
-                    }
-                    @if (authState.User.IsInRole("SchoolNurse"))
-                    {
-                        <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
-                            Nurse Dashboard
-                        </MudNavLink>
-                    }
-                    @if (authState.User.IsInRole("Viewer"))
-                    {
-                        <MudNavLink Href="/viewer-dashboard" Icon="@Icons.Material.Filled.Visibility">
-                            Viewer Dashboard
-                        </MudNavLink>
-                    }
-                </MudNavGroup>
+                }
+                @if (authState.User.IsInRole("SchoolNurse"))
+                {
+                    <MudNavLink Href="/nurse-dashboard" Icon="@Icons.Material.Filled.MedicalServices">
+                        Nurse Dashboard
+                    </MudNavLink>
+                }
+                @if (authState.User.IsInRole("Viewer"))
+                {
+                    <MudNavLink Href="/viewer-dashboard" Icon="@Icons.Material.Filled.Visibility">
+                        Viewer Dashboard
+                    </MudNavLink>
+                }
+            </MudNavGroup>
 
-                <MudNavLink Href="/Account/Logout" Icon="@Icons.Material.Filled.Logout">
-                    Sign out
-                </MudNavLink>
-            </Authorized>
-            <NotAuthorized>
-                <MudNavLink Href="/Account/Login" Icon="@Icons.Material.Filled.Login">
-                    Sign in
-                </MudNavLink>
-            </NotAuthorized>
-        </AuthorizeView>
+            <MudDivider />
 
-    </MudNavMenu>
+            <MudNavLink Href="/alerts" Icon="@Icons.Material.Filled.Notifications">
+                Alerts
+            </MudNavLink>
+
+            <MudNavLink OnClick="Logout"
+                        PreventDefault="true"
+                        Icon="@Icons.Material.Filled.Logout">
+                Sign out
+            </MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="/Account/Login" Icon="@Icons.Material.Filled.Login">
+                Sign in
+            </MudNavLink>
+            <MudNavLink Href="/Account/Register" Icon="@Icons.Material.Filled.PersonAdd">
+                Register
+            </MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudNavMenu>
+
+@code {
+    [Inject]
+    private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    private async Task Logout(MouseEventArgs _)
+    {
+        await SignInManager.SignOutAsync();
+        Navigation.NavigateTo("/Account/Login", forceLoad: true);
+    }
 }
