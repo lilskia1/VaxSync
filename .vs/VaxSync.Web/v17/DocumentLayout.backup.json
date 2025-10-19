@@ -58,8 +58,7 @@
               "RelativeToolTip": "Components\\Account\\Pages\\Start.razor",
               "ViewState": "AgIAADEAAAAAAAAAAAD4vzQAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-19T00:54:09.968Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-19T00:54:09.968Z"
             },
             {
               "$type": "Document",
@@ -83,8 +82,7 @@
               "RelativeToolTip": "Components\\_Imports.razor",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-18T22:59:29.112Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-18T22:59:29.112Z"
             },
             {
               "$type": "Document",
@@ -96,8 +94,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAHkAAAAAAAAAAAAqwKEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-18T22:41:13.037Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-18T22:41:13.037Z"
             },
             {
               "$type": "Document",
@@ -109,8 +106,7 @@
               "RelativeToolTip": "Components\\App.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-18T22:40:24.994Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-18T22:40:24.994Z"
             },
             {
               "$type": "Document",
@@ -130,9 +126,9 @@
               "Title": "MainLayout.razor",
               "DocumentMoniker": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Layout\\MainLayout.razor",
               "RelativeDocumentMoniker": "Components\\Layout\\MainLayout.razor",
-              "ToolTip": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Layout\\MainLayout.razor*",
-              "RelativeToolTip": "Components\\Layout\\MainLayout.razor*",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAAC0AAAAQAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Layout\\MainLayout.razor",
+              "RelativeToolTip": "Components\\Layout\\MainLayout.razor",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAAC0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-10-18T21:37:09.757Z",
               "EditorCaption": ""
