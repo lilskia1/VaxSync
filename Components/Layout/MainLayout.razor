@@ -5,34 +5,26 @@
 @using VaxSync.Web.Components.Layout
 
 <MudLayout>
-
-    <!-- Top bar -->
-    <MudAppBar Elevation="4" Class="vx-appbar">
-        <MudText Typo="Typo.h5" Class="ml-2 text-white">VaxSync</MudText>
+    <MudAppBar Elevation="0" Color="Color.Primary">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudText Typo="Typo.h6">VaxSync</MudText>
         <MudSpacer />
-        <AuthorizeView>
-            <Authorized>
-                <MudText Class="mr-4 text-white">
-                    Hello, @context.User.Identity?.Name
-                </MudText>
-            </Authorized>
-        </AuthorizeView>
     </MudAppBar>
-
-    <!-- Sidebar -->
-    <MudDrawer Open="true"
-               Elevation="1"
-               ClipMode="DrawerClipMode.Always"
-               Variant="DrawerVariant.Responsive"
-               Breakpoint="Breakpoint.Lg">
+    
+    <MudDrawer @bind-Open="@drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="1">
         <NavMenu />
     </MudDrawer>
 
-    <!-- Main content -->
-    <MudMainContent Class="p-6">
-        <MudContainer MaxWidth="MaxWidth.False">
-            @Body
-        </MudContainer>
+    <MudMainContent>
+        @Body
     </MudMainContent>
-
 </MudLayout>
+
+@code {
+    private bool drawerOpen = true;
+
+    private void ToggleDrawer()
+    {
+        drawerOpen = !drawerOpen;
+    }
+}

@@ -69,10 +69,7 @@ internal class Program
 
         // ---- App services ----
         builder.Services.AddScoped<AuditLogService>();
-        builder.Services.AddMudServices(config =>
-        {
-            config.Theme = AppTheme.Theme;
-        });
+        builder.Services.AddMudServices();
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
         var app = builder.Build();

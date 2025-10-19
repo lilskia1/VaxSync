@@ -28,11 +28,18 @@
 
     .vx-right {
         flex: 1;
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        position: relative
+        position: relative;
+        overflow: hidden; /* Add this to contain the image */
     }
+
+        .vx-right img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* This makes the image cover the entire container */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
 
         .vx-right::after {
             content: "";
@@ -63,8 +70,11 @@
         </MudText>
     </section>
 
-<section class="vx-right"><img src="images/nurse-student.jpeg" /></section>
+    <section class="vx-right">
+        <img src="images/nurse-student.jpeg" alt="Nurse with student" />
+    </section>
 </div>
+
 
 @code {
     protected override async Task OnInitializedAsync()
