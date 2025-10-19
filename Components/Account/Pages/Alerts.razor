@@ -1,6 +1,11 @@
 @page "/alerts"
-@using VaxSync.Web.Components.Alerts
+@using Microsoft.AspNetCore.Components
+@using Microsoft.EntityFrameworkCore
 @using MudBlazor
+@using VaxSync.Web.Components.Alerts
+@using VaxSync.Web.Data
+@using VaxSync.Web.Models
+@inject ApplicationDbContext Db
 
 <PageTitle>Vaccination Alerts</PageTitle>
 
@@ -13,9 +18,16 @@
     </MudSelect>
   </MudItem>
 
+  <MudItem xs="12">
+    <MudText Class="mud-text-caption mud-text-secondary">
+      Showing alerts for: @ActiveSchoolDisplay. Append <code>?schoolId=&lt;code or id&gt;</code> to the URL to switch schools.
+    </MudText>
+  </MudItem>
+
   <MudItem xs="12" class="mt-4">
     <AlertsList Filter="_filter"
-                ScopeToCurrentUser="true"
+                SchoolId="@_activeSchoolId"
+                ScopeToCurrentUser="false"
                 ShowActions="true"
                 OnView="GoToDetails"
                 OnDownload="DownloadPdf" />
@@ -24,6 +36,39 @@
 
 @code {
   private AlertsList.AlertFilter _filter = AlertsList.AlertFilter.All;
+
+  [SupplyParameterFromQuery(Name = "schoolId")]
+  public string? SchoolIdQuery { get; set; }
+
+  private string? _activeSchoolId;
+  private string ActiveSchoolDisplay { get; set; } = "All schools";
+
+  protected override async Task OnParametersSetAsync()
+  {
+    var schools = await Db.Schools.AsNoTracking().ToListAsync();
+
+    School? selected = null;
+    var requested = SchoolIdQuery?.Trim();
+    if (!string.IsNullOrWhiteSpace(requested))
+    {
+      selected = schools.FirstOrDefault(s =>
+        string.Equals(s.Id, requested, StringComparison.OrdinalIgnoreCase) ||
+        (!string.IsNullOrWhiteSpace(s.Code) && string.Equals(s.Code, requested, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    if (selected is not null)
+    {
+      _activeSchoolId = selected.Id;
+      ActiveSchoolDisplay = string.IsNullOrWhiteSpace(selected.Code)
+        ? selected.Name
+        : $"{selected.Name} ({selected.Code})";
+    }
+    else
+    {
+      _activeSchoolId = null;
+      ActiveSchoolDisplay = "All schools";
+    }
+  }
 
   private void GoToDetails(string studentId)
     => Navigation.NavigateTo($"/student-details/{studentId}");
