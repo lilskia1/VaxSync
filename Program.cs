@@ -52,6 +52,7 @@ internal class Program
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
+        /* Commented out login redirect configuration so navigation works without signing in.
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Account/Login";
@@ -60,6 +61,7 @@ internal class Program
             options.SlidingExpiration = true;
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         });
+        */
 
         // Blazor auth helpers for AuthorizeView etc.
         builder.Services.AddCascadingAuthenticationState();

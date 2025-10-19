@@ -98,11 +98,14 @@
         if (ScopeToCurrentUser && string.IsNullOrWhiteSpace(SchoolId))
         {
             var state = await AuthState.GetAuthenticationStateAsync();
-            var user = await UserManager.GetUserAsync(state.User);
-            if (state.User.IsInRole("SchoolNurse") || state.User.IsInRole("Viewer"))
+            if (state.User.Identity?.IsAuthenticated == true)
             {
-                if (!string.IsNullOrEmpty(user?.SchoolId))
-                    q = q.Where(r => r.Student.SchoolId == user.SchoolId);
+                var user = await UserManager.GetUserAsync(state.User);
+                if (state.User.IsInRole("SchoolNurse") || state.User.IsInRole("Viewer"))
+                {
+                    if (!string.IsNullOrEmpty(user?.SchoolId))
+                        q = q.Where(r => r.Student.SchoolId == user.SchoolId);
+                }
             }
         }
 

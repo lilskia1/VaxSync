@@ -1,14 +1,12 @@
 ﻿@page "/viewer-dashboard"
-@attribute [Authorize(Roles = "Viewer")]
-@using Microsoft.AspNetCore.Identity
+@* @attribute [Authorize(Roles = "Viewer")] *@
+@using Microsoft.AspNetCore.Components
 @using Microsoft.EntityFrameworkCore
 @using System.Collections.Generic
 @using VaxSync.Web.Data
 @using VaxSync.Web.Models
 @using VaxSync.Web.Components.Alerts
 @inject ApplicationDbContext Db
-@inject AuthenticationStateProvider AuthState
-@inject UserManager<ApplicationUser> UserManager
 
 <PageTitle>Viewer Dashboard</PageTitle>
 
@@ -16,6 +14,9 @@
     <MudItem xs="12">
         <MudText Typo="Typo.h5">Dashboard</MudText>
         <MudText Class="mud-text-secondary">Read-only view for your school</MudText>
+        <MudText Class="mud-text-caption mud-text-secondary">
+            Currently showing: @ActiveSchoolDisplay. Append <code>?schoolId=&lt;code or id&gt;</code> to the URL to switch schools.
+        </MudText>
     </MudItem>
 
     <MudItem xs="12" sm="6" md="3">
@@ -53,7 +54,8 @@
         <MudPaper Class="p-4">
             <MudText Typo="Typo.h6" Class="mb-2">Alerts (top 5)</MudText>
             <AlertsList Filter="AlertsList.AlertFilter.Overdue"
-                        ScopeToCurrentUser="true"
+                        SchoolId="@_activeSchoolId"
+                        ScopeToCurrentUser="false"
                         MaxItems="5"
                         ShowActions="false" />
             <MudButton Class="mt-2" Variant="Variant.Text" Href="/alerts">View all</MudButton>
@@ -72,15 +74,43 @@
         ChartPalette = new[] { "#16A34A", "#F59E0B" }
     };
 
-    protected override async Task OnInitializedAsync()
+    [SupplyParameterFromQuery(Name = "schoolId")]
+    public string? SchoolIdQuery { get; set; }
+
+    private string? _activeSchoolId;
+    private string ActiveSchoolDisplay { get; set; } = "No school selected";
+
+    protected override async Task OnParametersSetAsync()
     {
-        var state = await AuthState.GetAuthenticationStateAsync();
-        var user = await UserManager.GetUserAsync(state.User);
-        var schoolId = user?.SchoolId;
-        if (string.IsNullOrWhiteSpace(schoolId)) return;
+        var schools = await Db.Schools.AsNoTracking().ToListAsync();
+
+        if (schools.Count == 0)
+        {
+            _activeSchoolId = null;
+            ActiveSchoolDisplay = "No schools available";
+            Totals = new(0, 0, 0);
+            complianceSeries = new List<ChartSeries>();
+            return;
+        }
+
+        School? selected = null;
+        var requested = SchoolIdQuery?.Trim();
+        if (!string.IsNullOrWhiteSpace(requested))
+        {
+            selected = schools.FirstOrDefault(s =>
+                string.Equals(s.Id, requested, StringComparison.OrdinalIgnoreCase) ||
+                (!string.IsNullOrWhiteSpace(s.Code) && string.Equals(s.Code, requested, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        selected ??= schools.OrderBy(s => s.Name).First();
+
+        _activeSchoolId = selected.Id;
+        ActiveSchoolDisplay = string.IsNullOrWhiteSpace(selected.Code)
+            ? selected.Name
+            : $"{selected.Name} ({selected.Code})";
 
         var students = await Db.Students.AsNoTracking()
-                        .Where(s => s.SchoolId == schoolId)
+                        .Where(s => s.SchoolId == _activeSchoolId)
                         .ToListAsync();
 
         var total = students.Count;
