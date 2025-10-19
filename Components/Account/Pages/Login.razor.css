@@ -1,10 +1,5 @@
-/*.login-shell {
-    min-height: calc(100vh - 6rem);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: clamp(2rem, 4vw, 4rem) 1.5rem;
-    background: radial-gradient(circle at 10% 20%, rgba(27, 161, 226, 0.35) 0%, rgba(11, 61, 145, 0.55) 35%, rgba(243, 244, 246, 1) 85%);
+.login-shell {
+    gap: clamp(2rem, 4vw, 3.5rem);
 }
 
 .login-card {
@@ -14,7 +9,7 @@
     background-color: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(12px);
     box-shadow: 0 24px 60px rgba(7, 26, 64, 0.18);
-}*/
+}
 
 .login-card ::deep .mud-input-root {
     border-radius: 0.75rem;
@@ -35,7 +30,7 @@
 
 @media (max-width: 600px) {
     .login-shell {
-        min-height: calc(100vh - 4rem);
+        min-height: calc(100vh - 3.5rem);
         padding-inline: 1rem;
     }
 
