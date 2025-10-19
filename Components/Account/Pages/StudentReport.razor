@@ -1,4 +1,5 @@
 @page "/student-report/{id}"
+@using Microsoft.JSInterop
 @using VaxSync.Web.Services
 @inject StudentReportService Reports
 @inject IJSRuntime JS
@@ -6,19 +7,48 @@
 <PageTitle>Student Report</PageTitle>
 
 <MudContainer Class="py-6" MaxWidth="MaxWidth.Small">
-    <MudText Typo="Typo.h5" Class="mb-4">Generating report…</MudText>
+    <MudText Typo="Typo.h5" Class="mb-4">Generating report</MudText>
     <MudProgressCircular Indeterminate="true" />
 </MudContainer>
 
 @code {
     [Parameter] public string Id { get; set; } = "";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
+    private bool _downloaded;
 
-        var bytes = await Reports.GenerateAsync(Id);
-        var base64 = Convert.ToBase64String(bytes);
-        await JS.InvokeVoidAsync("downloadFileAs", $"StudentReport_{Id}.pdf", "application/pdf", base64);
+    protected override async Task OnInitializedAsync()
+    {
+        await TriggerDownloadAsync();
+    }
+
+    private async Task TriggerDownloadAsync()
+    {
+        if (_downloaded)
+        {
+            return;
+        }
+
+        try
+        {
+            var bytes = await Reports.GenerateAsync(Id);
+            var base64 = Convert.ToBase64String(bytes);
+
+            await JS.InvokeVoidAsync(
+                "downloadFileAs",
+                $"StudentReport_{Id}.pdf",
+                "application/pdf",
+                base64);
+
+            _downloaded = true;
+        }
+        catch (InvalidOperationException)
+        {
+            // JS interop may be unavailable during prerender; the interactive pass will retry.
+        }
+        catch (JSException)
+        {
+            // If the download fails, the user can refresh the page to retry.
+        }
     }
 }
+

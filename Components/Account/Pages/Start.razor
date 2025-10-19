@@ -67,32 +67,25 @@
 </div>
 
 @code {
-    private bool _navigated;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (!firstRender && _navigated)
-        {
-            return;
-        }
-
-        var here = new Uri(Nav.Uri).AbsolutePath;
-
         try
         {
             var state = await AuthState.GetAuthenticationStateAsync();
             var authed = state.User?.Identity?.IsAuthenticated == true;
 
             var target = authed ? "/dashboard" : "/Account/Login";
+            var here = new Uri(Nav.Uri).AbsolutePath;
 
-            await InvokeAsync(() =>
+            if (string.Equals(here, target, StringComparison.OrdinalIgnoreCase))
             {
-                Nav.NavigateTo(target, new NavigationOptions
-                {
-                    ReplaceHistoryEntry = true,
-                    ForceLoad = false
-                });
-                _navigated = true;
+                return;
+            }
+
+            Nav.NavigateTo(target, new NavigationOptions
+            {
+                ReplaceHistoryEntry = true,
+                ForceLoad = false
             });
         }
         catch (Microsoft.AspNetCore.Components.NavigationException)
@@ -104,7 +97,4 @@
             // let the ErrorBoundary surface details, don’t kill first render
         }
     }
-
-    private static bool Is(string path, string target) =>
-        string.Equals(path, target, StringComparison.OrdinalIgnoreCase);
 }
