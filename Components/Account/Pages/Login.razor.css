@@ -1,4 +1,4 @@
-.login-shell {
+/*.login-shell {
     min-height: calc(100vh - 6rem);
     display: flex;
     align-items: center;
@@ -14,7 +14,7 @@
     background-color: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(12px);
     box-shadow: 0 24px 60px rgba(7, 26, 64, 0.18);
-}
+}*/
 
 .login-card ::deep .mud-input-root {
     border-radius: 0.75rem;

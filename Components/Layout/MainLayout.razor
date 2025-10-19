@@ -12,7 +12,7 @@
                        OnClick="@ToggleDrawer"
                        Class="me-2" />
         <MudText Typo="Typo.h6" Class="fw-semibold">VaxSync</MudText>
-        <MudSpacer />
+        <MudSpacer /> 
     </MudAppBar>
 
     <MudDrawer @bind-Open="@drawerOpen"
@@ -21,12 +21,9 @@
                Elevation="1"
                Color="Color.Primary"
                Class="vx-drawer">
-        <MudDrawerHeader Class="drawer-header">
-            <MudText Typo="Typo.h6" Class="drawer-title">Navigation</MudText>
-        </MudDrawerHeader>
-        <MudDrawerContent>
+        <MudDrawerHeader Class="drawer-header">        </MudDrawerHeader>
             <NavMenu />
-        </MudDrawerContent>
+       
     </MudDrawer>
 
     <MudMainContent Class="app-main">

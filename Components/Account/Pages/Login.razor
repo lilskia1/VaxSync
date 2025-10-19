@@ -14,15 +14,15 @@
 
 <div class="login-shell">
     <MudPaper Class="login-card" Elevation="6">
-        <MudStack Spacing="2">
-            <MudText Typo="Typo.h4" Class="fw-semibold">Welcome back</MudText>
-            <MudText Typo="Typo.body1" Class="mud-text-secondary">Use your VaxSync account to access dashboards and tools.</MudText>
+        <MudStack Spacing="4">
+            <MudText Typo="Typo.h3" Class="fw-semibold">Welcome back</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">Use your VaxSync account to access dashboards and tools.</MudText>
 
             <StatusMessage Message="@errorMessage" />
 
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
                 <DataAnnotationsValidator />
-                <MudStack Spacing="2">
+                <MudStack Spacing="4">
                     <MudTextField @bind-Value="Input.Email"
                                   For="@(() => Input.Email)"
                                   Label="Email"
@@ -57,8 +57,8 @@
                         Log in
                     </MudButton>
 
-                    <MudStack AlignItems="AlignItems.Center" Spacing="1" Class="mt-2 link-stack">
-                        <MudText Typo="Typo.body2" Class="mud-text-secondary">Don't have an account?</MudText>
+                    <MudStack AlignItems="AlignItems.Center" Spacing="4" Class="mt-2 link-stack">
+                        <MudText Typo="Typo.body1" Class="mud-text-secondary">Don't have an account?</MudText>
                         <MudLink Href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))" Class="mud-typography-body2">
                             Register a new account
                         </MudLink>

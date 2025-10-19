@@ -1,3 +1,27 @@
+/* --- Global layout adjustments --- */
+.app-main,
+.login-shell {
+    display: flex;
+    width: 100%;
+    max-width: 640px;
+    padding: 12rem 12rem 12rem 12rem; /* adds more inner space */
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: 12px solid rgba(0, 0, 0, 0.08); /* soft outline */
+    background-color: #fff;
+    /*
+        display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 640px;
+    padding: 3rem 4rem;
+    align-items: center;*/
+    /*justify-content: flex-start;*/
+    /* keeps below topbar */
+    /*padding-top: 24px;
+    box-sizing: border-box;*/
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
