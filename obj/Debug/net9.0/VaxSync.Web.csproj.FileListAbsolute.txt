@@ -696,6 +696,6 @@ C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\scopedcss\Compon
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\scopedcss\Components\Pages\AdminDashboard.razor.rz.scp.css
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\scopedcss\Components\Pages\NurseDashboard.razor.rz.scp.css
 C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\scopedcss\Components\Pages\ViewerDashboard.razor.rz.scp.css
-C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\nj00wfanz5-nsbeemi5ty.gz
-C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\42sfa186x6-nsbeemi5ty.gz
-C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\l754y5zyqo-p7v1guigg9.gz
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\l754y5zyqo-if2wox27nl.gz
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\nj00wfanz5-9wn3hmato3.gz
+C:\Users\DMT_3\source\repos\d4nnywoods\VaxSync\obj\Debug\net9.0\compressed\42sfa186x6-9wn3hmato3.gz
