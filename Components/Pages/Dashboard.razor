@@ -4,24 +4,31 @@
 @inject NavigationManager Nav
 
 <div style="padding:2rem">
-    <p>Loading dashboard…</p>
+    <p>Loading dashboard</p>
 </div>
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (!firstRender) return;
-
         var state = await AuthState.GetAuthenticationStateAsync();
         var user = state.User;
 
         if (user.IsInRole("Admin"))
+        {
             Nav.NavigateTo("/admin-dashboard", replace: true);
+        }
         else if (user.IsInRole("SchoolNurse"))
+        {
             Nav.NavigateTo("/nurse-dashboard", replace: true);
+        }
         else if (user.IsInRole("Viewer"))
+        {
             Nav.NavigateTo("/viewer-dashboard", replace: true);
+        }
         else
+        {
             Nav.NavigateTo("/", replace: true);
+        }
     }
 }
+
