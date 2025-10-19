@@ -4,11 +4,12 @@
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @using MudBlazor
+@using VaxSync.Web.Components.Account
 @using VaxSync.Web.Data   @* <-- make sure this matches your real namespace (avoid Vax_Sync vs VaxSync mismatch) *@
 
 @inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
-@inject NavigationManager Nav
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
 @inject ILogger<Login> Logger
 
 <PageTitle>Log in</PageTitle>
@@ -56,15 +57,13 @@
                     <MudButton Type="ButtonType.Submit"
                                Variant="Variant.Filled"
                                Color="Color.Primary"
-                               FullWidth="true"
-                               Loading="@isSubmitting"
-                               Disabled="@isSubmitting">
+                               FullWidth="true">
                         Log in
                     </MudButton>
 
                     <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="mt-2 link-stack">
                         <MudText Typo="Typo.body1" Class="mud-text-secondary">Don’t have an account?</MudText>
-                        <MudLink Href="@(Nav.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))"
+                        <MudLink Href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))"
                                  Class="mud-typography-body2">
                             Register a new account
                         </MudLink>
@@ -80,8 +79,6 @@
 
 @code {
     private string? errorMessage;
-    private bool isSubmitting;
-
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
@@ -100,86 +97,30 @@
 
     public async Task LoginUser()
     {
-        if (isSubmitting) return;
-
-        try
+        // This doesn't count login failures towards account lockout
+        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        if (result.Succeeded)
         {
-            isSubmitting = true;
-
-            var result = await SignInManager.PasswordSignInAsync(
-                Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-
-            if (result.Succeeded)
-            {
-                Logger.LogInformation("User logged in.");
-                await RedirectByRoleOrReturnUrlAsync();
-                return;
-            }
-
-            if (result.RequiresTwoFactor)
-            {
-                // If you use 2FA, keep this; otherwise you can remove it.
-                Nav.NavigateTo($"/Account/LoginWith2fa?returnUrl={Uri.EscapeDataString(ReturnUrl ?? string.Empty)}&rememberMe={(Input.RememberMe ? "true" : "false")}");
-                return;
-            }
-
-            if (result.IsLockedOut)
-            {
-                Nav.NavigateTo("/Account/Lockout");
-                return;
-            }
-
-            errorMessage = "Invalid login attempt.";
+            Logger.LogInformation("User logged in.");
+            RedirectManager.RedirectTo(ReturnUrl);
         }
-        finally
+        else if (result.RequiresTwoFactor)
         {
-            isSubmitting = false;
+            RedirectManager.RedirectTo(
+                "Account/LoginWith2fa",
+                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+        }
+        else if (result.IsLockedOut)
+        {
+            Logger.LogWarning("User account locked out.");
+            RedirectManager.RedirectTo("Account/Lockout");
+        }
+        else
+        {
+            errorMessage = "Error: Invalid login attempt.";
         }
     }
-
-    private async Task RedirectByRoleOrReturnUrlAsync()
-    {
-        // If we were sent here from a protected page, honor that—unless it’s just "/" (we don’t do a general dashboard).
-        if (!string.IsNullOrWhiteSpace(ReturnUrl) && !IsRoot(ReturnUrl))
-        {
-            Nav.NavigateTo(ReturnUrl!, replace: true);
-            return;
-        }
-
-        // Look up the user and send them to their specific dashboard. Priority order if multiple roles exist.
-        var user = await UserManager.FindByEmailAsync(Input.Email);
-        if (user is null)
-        {
-            // Fallback: send home (or login again) if something’s off.
-            Nav.NavigateTo("/", replace: true);
-            return;
-        }
-
-        if (await UserManager.IsInRoleAsync(user, "Admin"))
-        {
-            Nav.NavigateTo("/admin-dashboard", replace: true);
-            return;
-        }
-
-        if (await UserManager.IsInRoleAsync(user, "SchoolNurse"))
-        {
-            Nav.NavigateTo("/nurse-dashboard", replace: true);
-            return;
-        }
-
-        if (await UserManager.IsInRoleAsync(user, "Viewer"))
-        {
-            Nav.NavigateTo("/viewer-dashboard", replace: true);
-            return;
-        }
-
-        // If the user has no known role, keep it obvious.
-        errorMessage = "Your account doesn’t have a role assigned. Contact an administrator.";
-        StateHasChanged();
-    }
-
-    private static bool IsRoot(string url)
-        => string.Equals(url.Trim(), "/", StringComparison.OrdinalIgnoreCase);
 
     private sealed class InputModel
     {
