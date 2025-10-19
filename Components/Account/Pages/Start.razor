@@ -3,6 +3,7 @@
 @using MudBlazor
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject NavigationManager Nav
 @inject AuthenticationStateProvider AuthState
 
@@ -84,7 +85,7 @@
             var state = await AuthState.GetAuthenticationStateAsync();
             var authed = state.User?.Identity?.IsAuthenticated == true;
 
-            var target = authed ? "/dashboard" : "/Account/Login";
+            var target = authed ? ResolveDashboardTarget(state.User) : "/Account/Login";
             var here = new Uri(Nav.Uri).AbsolutePath;
 
             if (string.Equals(here, target, StringComparison.OrdinalIgnoreCase))
@@ -106,5 +107,25 @@
         {
             // let the ErrorBoundary surface details, don’t kill first render
         }
+    }
+
+    private static string ResolveDashboardTarget(ClaimsPrincipal? user)
+    {
+        if (user?.IsInRole("Admin") == true)
+        {
+            return "/admin-dashboard";
+        }
+
+        if (user?.IsInRole("SchoolNurse") == true)
+        {
+            return "/nurse-dashboard";
+        }
+
+        if (user?.IsInRole("Viewer") == true)
+        {
+            return "/viewer-dashboard";
+        }
+
+        return "/";
     }
 }
