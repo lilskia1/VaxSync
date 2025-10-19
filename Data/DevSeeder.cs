@@ -5,10 +5,14 @@ using VaxSync.Web.Models;
 
 public static class DevSeeder
 {
+    public const int DefaultBatchSize = 1_000;
     private static readonly Random _rng = new();
 
-    public static async Task SeedAsync(ApplicationDbContext db, int targetStudentCount, int schoolCount)
+    public static async Task SeedAsync(ApplicationDbContext db, int targetStudentCount, int schoolCount, int batchSize = DefaultBatchSize)
     {
+        if (targetStudentCount <= 0) return;
+        if (batchSize <= 0) throw new ArgumentOutOfRangeException(nameof(batchSize));
+
         // 0) Fast exit if already seeded near target
         var current = await db.Students.CountAsync();
         if (current >= targetStudentCount * 0.95) return;
@@ -73,7 +77,6 @@ public static class DevSeeder
         var schoolIds = await db.Schools.Select(s => new { s.Id, s.Code }).ToListAsync();
 
         // 4) Generate Students in batches to keep memory & transaction time sane.
-        int batchSize = 10_000;
         int remaining = targetStudentCount - current;
         while (remaining > 0)
         {
