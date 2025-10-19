@@ -136,27 +136,21 @@
         {
             return "/";
         }
-
-        if (await UserManager.IsInRoleAsync(user, "Admin"))
+        else if (result.RequiresTwoFactor)
         {
             return "/admin-dashboard";
         }
-
-        if (await UserManager.IsInRoleAsync(user, "SchoolNurse"))
+        else if (result.IsLockedOut)
         {
             return "/nurse-dashboard";
         }
-
-        if (await UserManager.IsInRoleAsync(user, "Viewer"))
+        else
         {
             return "/viewer-dashboard";
         }
 
         return "/";
     }
-
-    private static bool IsRoot(string url)
-        => string.Equals(url.Trim(), "/", StringComparison.OrdinalIgnoreCase);
 
     private sealed class InputModel
     {
