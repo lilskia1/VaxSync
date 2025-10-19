@@ -7,6 +7,7 @@
 @using VaxSync.Web.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
@@ -113,22 +114,7 @@
             {
                 Logger.LogInformation("User logged in.");
 
-                var destination = ReturnUrl;
-                if (!string.IsNullOrWhiteSpace(destination))
-                {
-                    var absoluteDestination = NavigationManager.ToAbsoluteUri(destination);
-                    var normalizedDestination = absoluteDestination.AbsoluteUri.TrimEnd('/');
-                    var normalizedBase = NavigationManager.BaseUri.TrimEnd('/');
-
-                    if (string.Equals(normalizedDestination, normalizedBase, StringComparison.OrdinalIgnoreCase))
-                    {
-                        destination = "dashboard";
-                    }
-                }
-                else
-                {
-                    destination = "dashboard";
-                }
+                var destination = await ResolveDestinationAsync();
 
                 RedirectManager.RedirectTo(destination);
             }
@@ -166,5 +152,45 @@
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+    }
+
+    private async Task<string> ResolveDestinationAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(ReturnUrl))
+        {
+            var absoluteDestination = NavigationManager.ToAbsoluteUri(ReturnUrl);
+            var normalizedDestination = absoluteDestination.AbsoluteUri.TrimEnd('/');
+            var normalizedBase = NavigationManager.BaseUri.TrimEnd('/');
+
+            if (!string.Equals(normalizedDestination, normalizedBase, StringComparison.OrdinalIgnoreCase))
+            {
+                return ReturnUrl;
+            }
+        }
+
+        var fallbackDestination = "dashboard";
+        var user = await UserManager.FindByEmailAsync(Input.Email);
+
+        if (user is null)
+        {
+            return fallbackDestination;
+        }
+
+        if (await UserManager.IsInRoleAsync(user, "Admin"))
+        {
+            return "admin-dashboard";
+        }
+
+        if (await UserManager.IsInRoleAsync(user, "SchoolNurse"))
+        {
+            return "nurse-dashboard";
+        }
+
+        if (await UserManager.IsInRoleAsync(user, "Viewer"))
+        {
+            return "viewer-dashboard";
+        }
+
+        return fallbackDestination;
     }
 }

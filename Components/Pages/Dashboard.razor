@@ -1,34 +1,11 @@
 @page "/dashboard"
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthState
-@inject NavigationManager Nav
 
-<div style="padding:2rem">
-    <p>Loading dashboard</p>
-</div>
-
-@code {
-    protected override async Task OnInitializedAsync()
-    {
-        var state = await AuthState.GetAuthenticationStateAsync();
-        var user = state.User;
-
-        if (user.IsInRole("Admin"))
-        {
-            Nav.NavigateTo("/admin-dashboard", replace: true);
-        }
-        else if (user.IsInRole("SchoolNurse"))
-        {
-            Nav.NavigateTo("/nurse-dashboard", replace: true);
-        }
-        else if (user.IsInRole("Viewer"))
-        {
-            Nav.NavigateTo("/viewer-dashboard", replace: true);
-        }
-        else
-        {
-            Nav.NavigateTo("/", replace: true);
-        }
-    }
-}
-
+<MudPaper Class="pa-6" Elevation="1">
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.h5">Dashboard</MudText>
+        <MudText Typo="Typo.body1" Class="mud-text-secondary">
+            Select the appropriate dashboard from the navigation menu. If your account has access to a
+            specific dashboard, you will be directed to it automatically after logging in.
+        </MudText>
+    </MudStack>
+</MudPaper>
