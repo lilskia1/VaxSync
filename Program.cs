@@ -82,10 +82,19 @@ internal class Program
             await db.Database.MigrateAsync();
 
             // Toggle via appsettings.Development.json
-            var seedEnabled = app.Configuration.GetValue<bool?>("Seed:Enabled") ?? true;
+            var seedSection = app.Configuration.GetSection("Seed");
+            var seedEnabled = seedSection.GetValue<bool?>("Enabled") ?? true;
             if (seedEnabled)
             {
-                await DevSeeder.SeedAsync(db, targetStudentCount: 10000, schoolCount: 100);
+                var studentCount = seedSection.GetValue<int?>("StudentCount") ?? 500;
+                var schoolCount = seedSection.GetValue<int?>("SchoolCount") ?? 25;
+                var batchSize = seedSection.GetValue<int?>("BatchSize") ?? DevSeeder.DefaultBatchSize;
+
+                await DevSeeder.SeedAsync(
+                    db,
+                    targetStudentCount: Math.Clamp(studentCount, 0, 250_000),
+                    schoolCount: Math.Clamp(schoolCount, 1, 1_000),
+                    batchSize: Math.Clamp(batchSize, 100, 50_000));
             }
         }
 

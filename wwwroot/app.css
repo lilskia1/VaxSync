@@ -77,3 +77,21 @@ html, body {
     white-space: nowrap;
     border: 0;
 }
+
+.vx-nav-fallback {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.vx-nav-fallback .vx-nav-link {
+    color: #0B3D91;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.vx-nav-fallback .vx-nav-link:hover,
+.vx-nav-fallback .vx-nav-link:focus {
+    text-decoration: underline;
+}
