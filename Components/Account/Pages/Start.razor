@@ -68,7 +68,10 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender || _navigated) return;
+        if (!firstRender && _navigated)
+        {
+            return;
+        }
 
         var here = new Uri(Nav.Uri).AbsolutePath;
 
@@ -79,11 +82,15 @@
 
             var target = authed ? "/dashboard" : "/Account/Login";
 
-            // don’t navigate if we’re already at the target
-            if (Is(here, target)) return;
-
-            _navigated = true; // set before navigating to prevent re-entry loops
-            await InvokeAsync(() => Nav.NavigateTo(target, new NavigationOptions
+            await InvokeAsync(() =>
+                Nav.NavigateTo(target, new NavigationOptions
+                {
+                    ReplaceHistoryEntry = true,
+                    ForceLoad = false
+                });
+                _navigated = true;
+            });
+            _navigated = false;
             {
                 ReplaceHistoryEntry = true,
                 ForceLoad = false
@@ -95,7 +102,7 @@
         }
         catch
         {
-            // let the ErrorBoundary surface details, don’t kill first render
+            // let the ErrorBoundary surface details, donâ€™t kill first render
         }
     }
 
