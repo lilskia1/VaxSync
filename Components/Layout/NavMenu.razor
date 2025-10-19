@@ -16,10 +16,6 @@
     <AuthorizeView Context="authState">
         <Authorized>
             <MudNavGroup Icon="@Icons.Material.Filled.Dashboard" Text="Dashboards" Expanded="true">
-                <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.SpaceDashboard">
-                    Overview
-                </MudNavLink>
-
                 @if (authState.User.IsInRole("Admin"))
                 {
                     <MudNavLink Href="/admin-dashboard" Icon="@Icons.Material.Filled.AdminPanelSettings">
