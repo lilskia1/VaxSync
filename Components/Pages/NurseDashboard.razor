@@ -12,10 +12,10 @@
 
 <MudGrid Class="mb-6">
     <MudItem xs="12">
-        <MudText Typo="Typo.h5">Nurse Panel</MudText>
+        <MudText Typo="Typo.h4">Nurse Panel</MudText>
         <MudText Class="mud-text-secondary">Your assigned school overview</MudText>
         <MudText Class="mud-text-caption mud-text-secondary">
-            Currently showing: @ActiveSchoolDisplay. Append <code>?schoolId=&lt;code or id&gt;</code> to the URL to switch schools.
+            Currently showing: @ActiveSchoolDisplay. @* Append <code>?schoolId=&lt;code or id&gt;</code> to the URL to switch schools. *@
         </MudText>
     </MudItem>
 
@@ -58,7 +58,7 @@
 
     <MudItem xs="12">
         <MudPaper Class="p-4">
-            <MudText Typo="Typo.h6" Class="mb-2">Overdue alerts (top 5)</MudText>
+            <MudText Typo="Typo.h6" Class="mb-2">Overdue</MudText>
             <AlertsList Filter="AlertsList.AlertFilter.Overdue"
                         SchoolId="@_activeSchoolId"
                         ScopeToCurrentUser="false"

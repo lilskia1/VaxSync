@@ -136,7 +136,7 @@ else
     {
         Searched = true;
 
-        var q = Db.Students
+        IQueryable<Student> q = Db.Students
                   .AsNoTracking()
                   .Include(s => s.School); // to show School.Code
 

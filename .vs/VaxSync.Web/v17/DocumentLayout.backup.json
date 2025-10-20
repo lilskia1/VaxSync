@@ -3,16 +3,17 @@
   "WorkspaceRootPath": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F67E7137-3CF4-1FE2-F981-B3FC92275BB6}|VaxSync.Web.csproj|c:\\users\\dmt_3\\source\\repos\\d4nnywoods\\vaxsync\\components\\account\\pages\\start.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F67E7137-3CF4-1FE2-F981-B3FC92275BB6}|VaxSync.Web.csproj|solutionrelative:components\\account\\pages\\start.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F67E7137-3CF4-1FE2-F981-B3FC92275BB6}|VaxSync.Web.csproj|c:\\users\\dmt_3\\source\\repos\\d4nnywoods\\vaxsync\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{F67E7137-3CF4-1FE2-F981-B3FC92275BB6}|VaxSync.Web.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F67E7137-3CF4-1FE2-F981-B3FC92275BB6}|VaxSync.Web.csproj|c:\\users\\dmt_3\\source\\repos\\d4nnywoods\\vaxsync\\components\\account\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F67E7137-3CF4-1FE2-F981-B3FC92275BB6}|VaxSync.Web.csproj|solutionrelative:components\\account\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/VaxSyncDev/True/SqlTable/dbo.Students.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F67E7137-3CF4-1FE2-F981-B3FC92275BB6}|VaxSync.Web.csproj|c:\\users\\dmt_3\\source\\repos\\d4nnywoods\\vaxsync\\components\\pages\\nursedashboard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F67E7137-3CF4-1FE2-F981-B3FC92275BB6}|VaxSync.Web.csproj|solutionrelative:components\\pages\\nursedashboard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/VaxSyncDev/True/SqlTable/dbo.Schools.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/VaxSyncDev/True/SqlTable/dbo.StudentVaccines.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,8 +23,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\appsettings.Development.json*",
+              "RelativeToolTip": "appsettings.Development.json*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-20T02:57:27.252Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -34,41 +48,32 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Start.razor",
-              "DocumentMoniker": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Account\\Pages\\Start.razor",
-              "RelativeDocumentMoniker": "Components\\Account\\Pages\\Start.razor",
-              "ToolTip": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Account\\Pages\\Start.razor*",
-              "RelativeToolTip": "Components\\Account\\Pages\\Start.razor*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-19T20:51:43.236Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "NurseDashboard.razor",
-              "DocumentMoniker": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Pages\\NurseDashboard.razor",
-              "RelativeDocumentMoniker": "Components\\Pages\\NurseDashboard.razor",
-              "ToolTip": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Pages\\NurseDashboard.razor",
-              "RelativeToolTip": "Components\\Pages\\NurseDashboard.razor",
-              "ViewState": "AgIAADIAAAAAAAAAAAAswAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-19T20:36:31.678Z",
+              "Title": "dbo.Schools [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/VaxSyncDev/True/SqlTable/dbo.Schools.sql",
+              "ToolTip": "dbo.Schools [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-10-20T02:56:04.969Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Login.razor",
-              "DocumentMoniker": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Account\\Pages\\Login.razor",
-              "RelativeDocumentMoniker": "Components\\Account\\Pages\\Login.razor",
-              "ToolTip": "C:\\Users\\DMT_3\\source\\repos\\d4nnywoods\\VaxSync\\Components\\Account\\Pages\\Login.razor*",
-              "RelativeToolTip": "Components\\Account\\Pages\\Login.razor*",
-              "ViewState": "AgIAAGMAAAAAAAAAAAArwAsAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-19T19:24:35.786Z",
+              "Title": "dbo.Students [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/VaxSyncDev/True/SqlTable/dbo.Students.sql",
+              "ToolTip": "dbo.Students [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-10-20T02:55:48.354Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "dbo.StudentVaccines [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/VaxSyncDev/True/SqlTable/dbo.StudentVaccines.sql",
+              "ToolTip": "dbo.StudentVaccines [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-10-20T02:55:26.348Z",
               "EditorCaption": ""
             }
           ]
