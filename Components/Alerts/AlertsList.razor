@@ -26,7 +26,11 @@
     </HeaderContent>
 
     <RowTemplate>
-        <MudTd>@($"{context.StudentFirstName} {context.StudentLastName}")</MudTd>
+        <MudTd>
+            <MudLink Href="@($"/student-lookup?studentId={context.StudentId}")">
+                @($"{context.StudentFirstName} {context.StudentLastName}")
+            </MudLink>
+        </MudTd>
         <MudTd>@context.VaccineName</MudTd>
         <MudTd>@context.DoseNumber</MudTd>
         <MudTd>@context.DueDate.ToString("yyyy-MM-dd")</MudTd>

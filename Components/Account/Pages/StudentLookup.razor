@@ -1,6 +1,7 @@
 @page "/student-lookup"
 @using MudBlazor
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components
 @using VaxSync.Web.Models
 @using VaxSync.Web.Data
 @using Microsoft.AspNetCore.Components.Authorization
@@ -100,10 +101,14 @@ else
     private const string StatusCompliant = "Compliant";
     private const string StatusNotCompliant = "Not Compliant";
 
+    [SupplyParameterFromQuery(Name = "studentId")] public string? StudentIdQuery { get; set; }
+
     string SearchText = "";
     string StatusFilter = "";
     bool Searched = false;
-    string? SchoolId;
+    string? AssignedSchoolId;
+    bool IsAdmin;
+    bool _ready;
 
     List<Student> Students = new();
 
@@ -111,24 +116,40 @@ else
     {
         var state = await AuthState.GetAuthenticationStateAsync();
         var user = await UserManager.GetUserAsync(state.User);
-        SchoolId = user?.SchoolId;
+        AssignedSchoolId = user?.SchoolId;
+        IsAdmin = state.User.IsInRole("Admin");
+        _ready = true;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!_ready) return;
+
+        if (!string.IsNullOrWhiteSpace(StudentIdQuery))
+        {
+            SearchText = StudentIdQuery;
+            await Search();
+        }
     }
 
     async Task Search()
     {
         Searched = true;
 
-        if (string.IsNullOrWhiteSpace(SchoolId))
-        {
-            Students.Clear();
-            return;
-        }
-
-        // Base query scoped to the user's school
         var q = Db.Students
                   .AsNoTracking()
-                  .Include(s => s.School) // to show School.Code
-                  .Where(s => s.SchoolId == SchoolId);
+                  .Include(s => s.School); // to show School.Code
+
+        if (!IsAdmin)
+        {
+            if (string.IsNullOrWhiteSpace(AssignedSchoolId))
+            {
+                Students.Clear();
+                return;
+            }
+
+            q = q.Where(s => s.SchoolId == AssignedSchoolId);
+        }
 
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
@@ -136,12 +157,19 @@ else
 
             q = q.Where(s =>
                  s.Id == t // direct student id
-                 || s.FirstName.Contains(t) || s.LastName.Contains(t) // name
-                 || (s.School != null && s.School.Code.Contains(t))   // school code like "S-0001"
+                 || EF.Functions.Like(s.FirstName, $"%{t}%")
+                 || EF.Functions.Like(s.LastName, $"%{t}%")
+                 || (s.School != null && (
+                        EF.Functions.Like(s.School.Code, $"%{t}%")
+                        || EF.Functions.Like(s.School.Name, $"%{t}%")))
+                 || (IsAdmin && EF.Functions.Like(s.SchoolId, $"%{t}%"))
             );
         }
 
-        var list = await q.ToListAsync();
+        var list = await q
+            .OrderBy(s => s.LastName)
+            .ThenBy(s => s.FirstName)
+            .ToListAsync();
 
         if (!string.IsNullOrEmpty(StatusFilter))
         {
