@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 using VaxSync.Web.Data;
 using VaxSync.Web.Models;
 
@@ -121,8 +122,8 @@ public static class DevSeeder
             remaining -= take;
         }
 
-        // 5) (Optional) Populate StudentRequiredDose so due/overdue UI can light up later. :contentReference[oaicite:15]{index=15}
-        // You can synthesize due dates from DOB + schedule band windows; mark some Completed=true if a matching StudentVaccine exists.
+        // 5) Populate StudentRequiredDose so due/overdue UI can light up later. :contentReference[oaicite:15]{index=15}
+        await PopulateStudentRequiredDosesAsync(db);
 
         // 6) Done. You now have a “live” synthetic DB — UI reads via EF, reports print from rows. :contentReference[oaicite:16]{index=16}
     }
@@ -182,6 +183,173 @@ public static class DevSeeder
         }
 
         return list;
+    }
+
+    private static readonly Dictionary<string, Dictionary<int, int>> DoseDueMonths = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["DTaP"] = new Dictionary<int, int> { [1] = 2, [2] = 4, [3] = 6, [4] = 60 },
+        ["POLIO"] = new Dictionary<int, int> { [1] = 2, [2] = 4, [3] = 6, [4] = 60 },
+        ["MMR"] = new Dictionary<int, int> { [1] = 12, [2] = 60 },
+        ["VAR"] = new Dictionary<int, int> { [1] = 12, [2] = 60 },
+        ["HEPB"] = new Dictionary<int, int> { [1] = 0, [2] = 1, [3] = 6 },
+        ["Tdap"] = new Dictionary<int, int> { [1] = 132 },
+        ["MCV4"] = new Dictionary<int, int> { [1] = 132 },
+        ["HPV"] = new Dictionary<int, int> { [1] = 144, [2] = 150 }
+    };
+
+    private record ScheduleInfo(int Id, int VaccineId, string VaccineCode, int DoseNumber, string AgeRange);
+
+    private record StudentStub(string Id, DateTime Dob);
+
+    private static async Task PopulateStudentRequiredDosesAsync(ApplicationDbContext db)
+    {
+        if (await db.StudentRequiredDoses.AnyAsync()) return;
+
+        var schedules = await db.VaccineSchedules
+            .AsNoTracking()
+            .Include(vs => vs.Vaccine)
+            .ToListAsync();
+
+        var scheduleInfos = schedules
+            .Select(vs => new ScheduleInfo(vs.Id, vs.VaccineId, vs.Vaccine.Code, vs.DoseNumber, vs.AgeRange))
+            .ToList();
+
+        if (scheduleInfos.Count == 0) return;
+
+        var students = await db.Students
+            .AsNoTracking()
+            .Select(s => new StudentStub(s.Id, s.DateOfBirth))
+            .ToListAsync();
+
+        if (students.Count == 0) return;
+
+        var vaccineRecords = await db.StudentVaccines
+            .AsNoTracking()
+            .Select(v => new { v.StudentId, v.VaccineId, v.DoseNumber })
+            .ToListAsync();
+
+        var vaccineLookup = vaccineRecords
+            .GroupBy(v => v.StudentId)
+            .ToDictionary(g => g.Key, g => g.Select(x => (x.VaccineId, x.DoseNumber)).ToHashSet());
+
+        var today = DateTime.Today;
+        var buffer = new List<StudentRequiredDose>(DefaultBatchSize);
+        var compliance = new Dictionary<string, bool>(students.Count);
+
+        foreach (var student in students)
+        {
+            var owned = vaccineLookup.TryGetValue(student.Id, out var set)
+                ? set
+                : new HashSet<(int VaccineId, int DoseNumber)>();
+
+            compliance[student.Id] = true;
+
+            foreach (var schedule in scheduleInfos)
+            {
+                var completed = owned.Contains((schedule.VaccineId, schedule.DoseNumber));
+                var dueDate = CalculateDueDate(student.Dob, schedule);
+
+                if (!completed && dueDate <= today)
+                {
+                    compliance[student.Id] = false;
+                }
+
+                buffer.Add(new StudentRequiredDose
+                {
+                    StudentId = student.Id,
+                    VaccineScheduleId = schedule.Id,
+                    DoseNumber = schedule.DoseNumber,
+                    DueDate = dueDate,
+                    Completed = completed
+                });
+
+                if (buffer.Count >= DefaultBatchSize)
+                {
+                    await db.StudentRequiredDoses.AddRangeAsync(buffer);
+                    await db.SaveChangesAsync();
+                    buffer.Clear();
+                }
+            }
+        }
+
+        if (buffer.Count > 0)
+        {
+            await db.StudentRequiredDoses.AddRangeAsync(buffer);
+            await db.SaveChangesAsync();
+        }
+
+        await UpdateComplianceAsync(db, compliance);
+    }
+
+    private static async Task UpdateComplianceAsync(ApplicationDbContext db, Dictionary<string, bool> compliance)
+    {
+        if (compliance.Count == 0) return;
+
+        const int chunkSize = 1_000;
+        var ids = compliance.Keys.ToList();
+
+        for (int i = 0; i < ids.Count; i += chunkSize)
+        {
+            var slice = ids.Skip(i).Take(chunkSize).ToList();
+            var students = await db.Students
+                .Where(s => slice.Contains(s.Id))
+                .ToListAsync();
+
+            foreach (var student in students)
+            {
+                if (compliance.TryGetValue(student.Id, out var isCompliant))
+                {
+                    student.IsCompliant = isCompliant;
+                }
+            }
+
+            await db.SaveChangesAsync();
+        }
+    }
+
+    private static DateTime CalculateDueDate(DateTime dob, ScheduleInfo schedule)
+    {
+        var months = ResolveDueMonths(schedule);
+        var due = dob.AddMonths(months);
+
+        // Jitter a bit so tables show varied dates
+        due = due.AddDays(_rng.Next(-15, 16));
+
+        // Prevent impossible dates (before birth)
+        if (due < dob.AddDays(30))
+            due = dob.AddDays(30);
+
+        return due;
+    }
+
+    private static int ResolveDueMonths(ScheduleInfo schedule)
+    {
+        if (DoseDueMonths.TryGetValue(schedule.VaccineCode, out var doses) &&
+            doses.TryGetValue(schedule.DoseNumber, out var months))
+        {
+            return months;
+        }
+
+        var (start, end) = ParseAgeRange(schedule.AgeRange);
+        return end != 0 ? end : Math.Max(start, 6);
+    }
+
+    private static (int startMonths, int endMonths) ParseAgeRange(string ageRange)
+    {
+        if (string.IsNullOrWhiteSpace(ageRange)) return (0, 0);
+
+        var normalized = ageRange.Replace('–', '-').ToLowerInvariant();
+        var numbers = Regex.Matches(normalized, "\\d+")
+            .Select(m => int.Parse(m.Value, CultureInfo.InvariantCulture))
+            .ToArray();
+
+        var usesMonths = normalized.Contains("month");
+        var multiplier = usesMonths ? 1 : 12;
+
+        int start = numbers.Length > 0 ? numbers[0] : 0;
+        int end = numbers.Length > 1 ? numbers[1] : start;
+
+        return (start * multiplier, end * multiplier);
     }
 
     // ——— helpers ———
